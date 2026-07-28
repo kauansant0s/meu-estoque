@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}Logs{% endblock %}
+{% block conteudo %}
+
+<header class="topo">
+  <div class="topo__etiqueta">Histórico</div>
+  <h1 class="topo__titulo">Logs de estoque</h1>
+  <div class="topo__sub">Todas as entradas e saídas, com data e motivo</div>
+</header>
+
+<main class="pagina pagina--ampla">
+
+  <div class="lista-movimentacoes" id="lista-logs">
+    <!-- itens via JavaScript -->
+  </div>
+
+</main>
+
+<script src="/static/js/logs.js"></script>
+{% endblock %}

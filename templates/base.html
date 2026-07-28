@@ -10,6 +10,39 @@
 <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
+
+<button class="botao-menu" id="botao-menu-lateral" aria-label="Abrir menu">
+  <span></span><span></span><span></span>
+</button>
+
+<div class="fundo-menu oculto" id="fundo-menu-lateral">
+  <nav class="menu-lateral" id="menu-lateral">
+    <div class="menu-lateral__cabecalho">
+      <span class="menu-lateral__titulo">Menu</span>
+      <button class="menu-lateral__fechar" id="botao-fechar-menu" aria-label="Fechar menu">&times;</button>
+    </div>
+    <ul class="menu-lateral__lista">
+      <li>
+        <button class="menu-lateral__item" disabled>
+          Perfil <span class="menu-lateral__tag">em breve</span>
+        </button>
+      </li>
+      <li>
+        <button class="menu-lateral__item" disabled>
+          Ajustes <span class="menu-lateral__tag">em breve</span>
+        </button>
+      </li>
+      <li><a class="menu-lateral__item menu-lateral__item--link" href="/logs">Logs</a></li>
+    </ul>
+    <div class="menu-lateral__rodape">
+      <a class="menu-lateral__item menu-lateral__item--link" href="/">Estoque</a>
+      <a class="menu-lateral__item menu-lateral__item--link" href="/gerente">Painel da gerência</a>
+    </div>
+  </nav>
+</div>
+
 {% block conteudo %}{% endblock %}
+
+<script src="/static/js/menu.js"></script>
 </body>
 </html>

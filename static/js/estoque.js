@@ -46,7 +46,6 @@ function criarCartaoProduto(produto) {
   const div = document.createElement("div");
   div.className = "cartao-produto";
   div.innerHTML = `
-    <div class="cartao-produto__categoria">${produto.categoria || "sem categoria"}</div>
     <div class="cartao-produto__nome">${produto.nome}</div>
 
     <div class="cartao-produto__linha">
@@ -62,6 +61,7 @@ function criarCartaoProduto(produto) {
     </div>
 
     ${abaixoDoMinimo ? `<div class="cartao-produto__aviso">Abaixo do estoque mínimo (${produto.quantidade_minima})</div>` : ""}
+    ${produto.observacoes ? `<div class="cartao-produto__observacoes">${produto.observacoes}</div>` : ""}
 
     <div class="cartao-produto__acoes">
       <button class="passo passo--saida" data-acao="saida" data-id="${produto.id}" aria-label="Registrar saída">−</button>
@@ -111,12 +111,17 @@ function abrirModalProduto(produto) {
   document.getElementById("titulo-modal-produto").textContent = produto ? "Editar produto" : "Novo produto";
   document.getElementById("produto-id").value = produto ? produto.id : "";
   document.getElementById("produto-nome").value = produto ? produto.nome : "";
-  document.getElementById("produto-categoria").value = produto ? (produto.categoria || "") : "";
   document.getElementById("produto-quantidade").value = produto ? produto.quantidade : 0;
   document.getElementById("produto-quantidade").disabled = !!produto; // qtd só muda via movimentação
   document.getElementById("produto-minimo").value = produto ? produto.quantidade_minima : 0;
   document.getElementById("produto-preco").value = produto ? produto.preco : 0;
+  document.getElementById("produto-observacoes").value = produto ? (produto.observacoes || "") : "";
   sobreposicaoProduto.classList.remove("oculto");
+
+  // Foco automático no campo nome, assim que o modal aparece na tela
+  requestAnimationFrame(() => {
+    document.getElementById("produto-nome").focus();
+  });
 }
 
 function fecharModalProduto() {
@@ -130,7 +135,7 @@ formProduto.addEventListener("submit", async (evento) => {
   const id = document.getElementById("produto-id").value;
   const corpo = {
     nome: document.getElementById("produto-nome").value.trim(),
-    categoria: document.getElementById("produto-categoria").value.trim(),
+    observacoes: document.getElementById("produto-observacoes").value.trim(),
     quantidade_minima: document.getElementById("produto-minimo").value,
     preco: document.getElementById("produto-preco").value,
   };
@@ -224,6 +229,38 @@ formMovimento.addEventListener("submit", async (evento) => {
   fecharModalMovimento();
   await carregarProdutos();
 });
+
+// ------------------------------------------------------------
+// Maiúsculo invertido: sem shift = MAIÚSCULO, com shift = minúsculo
+// (o pedido foi pra facilitar digitar nome de produto sem precisar
+// segurar Caps Lock o tempo todo)
+// ------------------------------------------------------------
+
+function aplicarMaiusculoInvertido(input) {
+  input.addEventListener("keydown", (evento) => {
+    // Só intercepta teclas de letra (a-z, A-Z). Backspace, setas,
+    // Tab, etc. continuam funcionando normalmente.
+    const ehLetra = evento.key.length === 1 && /[a-zA-Z]/.test(evento.key);
+    if (!ehLetra) return;
+
+    evento.preventDefault();
+
+    const letra = evento.shiftKey ? evento.key.toLowerCase() : evento.key.toUpperCase();
+    const inicio = input.selectionStart;
+    const fim = input.selectionEnd;
+    const valorAtual = input.value;
+
+    input.value = valorAtual.slice(0, inicio) + letra + valorAtual.slice(fim);
+    input.selectionStart = input.selectionEnd = inicio + 1;
+
+    // Dispara o evento "input" manualmente, já que escrevemos o
+    // valor na mão — sem isso, outros trechos de código que "escutam"
+    // mudanças nesse campo não seriam avisados.
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
+
+aplicarMaiusculoInvertido(document.getElementById("produto-nome"));
 
 // --- Início ---
 carregarProdutos();

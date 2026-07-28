@@ -42,7 +42,7 @@ function renderizarTabela(produtos) {
     const linha = document.createElement("tr");
     linha.innerHTML = `
       <td>${produto.nome}</td>
-      <td>${produto.categoria || "—"}</td>
+      <td>${produto.observacoes || "—"}</td>
       <td>${produto.quantidade}</td>
       <td>${produto.quantidade_minima}</td>
       <td>${formatarPreco(produto.preco)}</td>

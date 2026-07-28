@@ -21,7 +21,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS produtos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
-            categoria TEXT,
+            observacoes TEXT,
             quantidade INTEGER NOT NULL DEFAULT 0,
             quantidade_minima INTEGER NOT NULL DEFAULT 0,
             preco REAL NOT NULL DEFAULT 0,
@@ -57,6 +57,12 @@ def pagina_gerente():
     return render_template("gerente.html")
 
 
+@app.route("/logs")
+def pagina_logs():
+    # Histórico completo de movimentações (quando e por quê)
+    return render_template("logs.html")
+
+
 # ---------- API: produtos ----------
 
 @app.route("/api/produtos", methods=["GET"])
@@ -75,15 +81,15 @@ def criar_produto():
     if not nome:
         return jsonify({"erro": "Nome do produto é obrigatório"}), 400
 
-    categoria = (dados.get("categoria") or "").strip()
+    observacoes = (dados.get("observacoes") or "").strip()
     quantidade = int(dados.get("quantidade", 0))
     quantidade_minima = int(dados.get("quantidade_minima", 0))
     preco = float(dados.get("preco", 0))
 
     conn = get_db()
     cursor = conn.execute(
-        "INSERT INTO produtos (nome, categoria, quantidade, quantidade_minima, preco, atualizado_em) VALUES (?, ?, ?, ?, ?, ?)",
-        (nome, categoria, quantidade, quantidade_minima, preco, datetime.now().isoformat())
+        "INSERT INTO produtos (nome, observacoes, quantidade, quantidade_minima, preco, atualizado_em) VALUES (?, ?, ?, ?, ?, ?)",
+        (nome, observacoes, quantidade, quantidade_minima, preco, datetime.now().isoformat())
     )
     conn.commit()
     novo_id = cursor.lastrowid
@@ -103,13 +109,13 @@ def editar_produto(produto_id):
         return jsonify({"erro": "Produto não encontrado"}), 404
 
     nome = dados.get("nome", produto["nome"])
-    categoria = dados.get("categoria", produto["categoria"])
+    observacoes = dados.get("observacoes", produto["observacoes"])
     quantidade_minima = int(dados.get("quantidade_minima", produto["quantidade_minima"]))
     preco = float(dados.get("preco", produto["preco"]))
 
     conn.execute(
-        "UPDATE produtos SET nome = ?, categoria = ?, quantidade_minima = ?, preco = ?, atualizado_em = ? WHERE id = ?",
-        (nome, categoria, quantidade_minima, preco, datetime.now().isoformat(), produto_id)
+        "UPDATE produtos SET nome = ?, observacoes = ?, quantidade_minima = ?, preco = ?, atualizado_em = ? WHERE id = ?",
+        (nome, observacoes, quantidade_minima, preco, datetime.now().isoformat(), produto_id)
     )
     conn.commit()
     produto = conn.execute("SELECT * FROM produtos WHERE id = ?", (produto_id,)).fetchone()
@@ -166,14 +172,15 @@ def movimentar_estoque(produto_id):
 
 @app.route("/api/movimentacoes", methods=["GET"])
 def listar_movimentacoes():
+    limite = int(request.args.get("limite", 30))
     conn = get_db()
     linhas = conn.execute("""
         SELECT m.id, m.tipo, m.quantidade, m.observacao, m.data, p.nome as produto_nome
         FROM movimentacoes m
         JOIN produtos p ON p.id = m.produto_id
         ORDER BY m.data DESC
-        LIMIT 30
-    """).fetchall()
+        LIMIT ?
+    """, (limite,)).fetchall()
     conn.close()
     return jsonify([dict(l) for l in linhas])
 

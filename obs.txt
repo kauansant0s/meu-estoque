@@ -1,3 +1,10 @@
 git add .
-git commit -m "descrição curta do que mudou"
+git commit -m "novas mudanças"
 git push
+
+
+
+nome dos produtos ficam por padrão tudo em maiusculo na hora de digitar, mesmo se o capslock estiver desativado, mas se eu apertar shift ai a letra fica minuscula.
+quando clica em adicionar produto, ja fica em destaque o campo do nome do produto
+não precisa de categoria, só um ultimo campo de "observações", que é ocional de ser preenchido
+criar um menu lateral no lado superior esquerdo com algumas opções, como perfil, ajustes e logs. os logs têm que ficar salvo para a pessoa poder ver quando ocorreram as alterações do estoque e o motivo delas
