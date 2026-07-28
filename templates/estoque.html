@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block titulo %}Estoque{% endblock %}
+{% block conteudo %}
+
+<header class="topo">
+  <div class="topo__etiqueta">Painel operacional</div>
+  <h1 class="topo__titulo">Estoque</h1>
+  <div class="topo__sub">Toque em + ou − pra registrar entrada e saída</div>
+</header>
+
+<main class="pagina">
+
+  <div class="barra-acoes">
+    <input type="text" id="campo-busca" class="campo-busca" placeholder="Buscar produto...">
+  </div>
+
+  <div id="lista-produtos" class="lista-produtos">
+    <!-- produtos entram aqui via JavaScript -->
+  </div>
+
+  <div id="estado-vazio" class="estado-vazio oculto">
+    Nenhum produto encontrado.
+  </div>
+
+</main>
+
+<button class="botao-flutuante" id="botao-novo-produto" aria-label="Adicionar produto">+</button>
+
+<!-- Modal: novo/editar produto -->
+<div class="sobreposicao oculto" id="sobreposicao-produto">
+  <div class="modal">
+    <h2 class="modal__titulo" id="titulo-modal-produto">Novo produto</h2>
+    <form id="form-produto">
+      <input type="hidden" id="produto-id">
+      <div class="campo">
+        <label for="produto-nome">Nome do produto</label>
+        <input type="text" id="produto-nome" required>
+      </div>
+      <div class="campo">
+        <label for="produto-categoria">Categoria</label>
+        <input type="text" id="produto-categoria" placeholder="Ex: Fixação, Elétrico...">
+      </div>
+      <div class="linha-campos">
+        <div class="campo">
+          <label for="produto-quantidade">Quantidade inicial</label>
+          <input type="number" id="produto-quantidade" min="0" value="0">
+        </div>
+        <div class="campo">
+          <label for="produto-minimo">Estoque mínimo</label>
+          <input type="number" id="produto-minimo" min="0" value="0">
+        </div>
+      </div>
+      <div class="campo">
+        <label for="produto-preco">Preço unitário (R$)</label>
+        <input type="number" id="produto-preco" min="0" step="0.01" value="0">
+      </div>
+      <div class="erro-formulario" id="erro-produto"></div>
+      <div class="modal__acoes">
+        <button type="button" class="botao botao--fantasma" id="botao-cancelar-produto">Cancelar</button>
+        <button type="submit" class="botao botao--primario">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: movimentar estoque (entrada/saída) -->
+<div class="sobreposicao oculto" id="sobreposicao-movimento">
+  <div class="modal">
+    <h2 class="modal__titulo" id="titulo-modal-movimento">Registrar entrada</h2>
+    <form id="form-movimento">
+      <input type="hidden" id="movimento-produto-id">
+      <input type="hidden" id="movimento-tipo">
+      <div class="campo">
+        <label for="movimento-quantidade">Quantidade</label>
+        <input type="number" id="movimento-quantidade" min="1" value="1" required>
+      </div>
+      <div class="campo">
+        <label for="movimento-observacao">Observação (opcional)</label>
+        <input type="text" id="movimento-observacao" placeholder="Ex: pedido 1234, contagem mensal...">
+      </div>
+      <div class="erro-formulario" id="erro-movimento"></div>
+      <div class="modal__acoes">
+        <button type="button" class="botao botao--fantasma" id="botao-cancelar-movimento">Cancelar</button>
+        <button type="submit" class="botao botao--primario" id="botao-confirmar-movimento">Confirmar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/static/js/estoque.js"></script>
+{% endblock %}

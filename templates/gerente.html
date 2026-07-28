@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block titulo %}Painel da gerência{% endblock %}
+{% block conteudo %}
+
+<header class="topo">
+  <div class="topo__etiqueta">Somente leitura</div>
+  <h1 class="topo__titulo">Painel da gerência</h1>
+  <div class="topo__sub">Visão geral do estoque em tempo real</div>
+</header>
+
+<main class="pagina pagina--ampla">
+
+  <div class="grade-stats">
+    <div class="stat">
+      <div class="stat__rotulo">Produtos cadastrados</div>
+      <div class="stat__valor" id="stat-total-produtos">—</div>
+    </div>
+    <div class="stat">
+      <div class="stat__rotulo">Valor total em estoque</div>
+      <div class="stat__valor" id="stat-valor-total">—</div>
+    </div>
+    <div class="stat stat--alerta">
+      <div class="stat__rotulo">Abaixo do mínimo</div>
+      <div class="stat__valor" id="stat-abaixo-minimo">—</div>
+    </div>
+  </div>
+
+  <h2 class="secao-titulo">Produtos</h2>
+  <div class="tabela-wrap">
+    <table class="tabela">
+      <thead>
+        <tr>
+          <th>Produto</th>
+          <th>Categoria</th>
+          <th>Quantidade</th>
+          <th>Mínimo</th>
+          <th>Preço unit.</th>
+          <th>Situação</th>
+        </tr>
+      </thead>
+      <tbody id="corpo-tabela-produtos">
+        <!-- linhas via JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="secao-titulo">Últimas movimentações</h2>
+  <div class="lista-movimentacoes" id="lista-movimentacoes">
+    <!-- itens via JavaScript -->
+  </div>
+
+  <div class="rodape-nota">Atualizado automaticamente a cada 30 segundos</div>
+
+</main>
+
+<script src="/static/js/gerente.js"></script>
+{% endblock %}

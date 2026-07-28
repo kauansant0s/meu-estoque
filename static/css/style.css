@@ -1,0 +1,548 @@
+/* ============================================
+   SISTEMA DE ESTOQUE — folha de estilos
+   Conceito visual: etiqueta de armazém / galpão.
+   Cartões de produto lembram etiquetas de caixa,
+   com uma faixa de nível de estoque tipo indicador
+   de painel industrial.
+   ============================================ */
+
+:root {
+  /* Paleta */
+  --cor-fundo: #e7e5df;         /* concreto claro */
+  --cor-superficie: #fbfaf7;    /* etiqueta / cartão */
+  --cor-texto: #191a16;         /* quase preto, levemente quente */
+  --cor-texto-suave: #64645c;
+  --cor-borda: #cfccc2;
+  --cor-accent: #d98c2b;        /* âmbar de sinalização */
+  --cor-accent-escuro: #a8641a;
+  --cor-ok: #2f6b4f;            /* verde estoque saudável */
+  --cor-alerta: #b23a2e;        /* vermelho abaixo do mínimo */
+  --cor-info: #3b6e8f;          /* azul aço */
+
+  /* Tipografia */
+  --fonte-display: "Archivo Expanded", sans-serif;
+  --fonte-corpo: "Barlow", sans-serif;
+  --fonte-mono: "IBM Plex Mono", monospace;
+
+  --raio: 10px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: var(--fonte-corpo);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(0,0,0,0.045) 1px, transparent 0);
+  background-size: 18px 18px;
+}
+
+button { font-family: inherit; }
+
+.oculto { display: none !important; }
+
+/* ---------- Cabeçalho ---------- */
+
+.topo {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--cor-texto);
+  color: var(--cor-superficie);
+  padding: 18px 20px 16px;
+  border-bottom: 4px solid var(--cor-accent);
+}
+
+.topo__etiqueta {
+  display: inline-block;
+  font-family: var(--fonte-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--cor-accent);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.topo__titulo {
+  font-family: var(--fonte-display);
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: 0.01em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.topo__sub {
+  font-size: 13px;
+  color: #c9c7bd;
+  margin-top: 2px;
+}
+
+/* ---------- Layout geral ---------- */
+
+.pagina {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px 16px 100px;
+}
+
+.pagina--ampla {
+  max-width: 980px;
+}
+
+/* ---------- Barra de busca + ação ---------- */
+
+.barra-acoes {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.campo-busca {
+  flex: 1;
+  padding: 12px 14px;
+  border: 1.5px solid var(--cor-borda);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+  font-size: 15px;
+  color: var(--cor-texto);
+}
+
+.campo-busca:focus {
+  outline: 2px solid var(--cor-accent);
+  outline-offset: 1px;
+}
+
+.botao {
+  border: none;
+  border-radius: var(--raio);
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.06s ease, opacity 0.15s ease;
+}
+
+.botao:active { transform: scale(0.97); }
+
+.botao--primario {
+  background: var(--cor-texto);
+  color: var(--cor-superficie);
+}
+
+.botao--accent {
+  background: var(--cor-accent);
+  color: #241400;
+}
+
+.botao--fantasma {
+  background: transparent;
+  border: 1.5px solid var(--cor-borda);
+  color: var(--cor-texto);
+}
+
+.botao--perigo {
+  background: transparent;
+  color: var(--cor-alerta);
+}
+
+.botao:focus-visible {
+  outline: 2px solid var(--cor-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Cartão de produto (etiqueta) ---------- */
+
+.lista-produtos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cartao-produto {
+  background: var(--cor-superficie);
+  border: 1.5px solid var(--cor-borda);
+  border-radius: var(--raio);
+  padding: 14px 14px 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cartao-produto::before {
+  /* furinho de etiqueta */
+  content: "";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cor-fundo);
+  border: 1.5px solid var(--cor-borda);
+}
+
+.cartao-produto__categoria {
+  font-family: var(--fonte-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+}
+
+.cartao-produto__nome {
+  font-family: var(--fonte-display);
+  font-weight: 700;
+  font-size: 18px;
+  margin: 2px 0 8px;
+  padding-right: 20px;
+}
+
+.cartao-produto__linha {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cartao-produto__quantidade {
+  font-family: var(--fonte-mono);
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.cartao-produto__unidade {
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+}
+
+.cartao-produto__preco {
+  font-family: var(--fonte-mono);
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+/* Faixa indicadora de nível de estoque */
+.medidor {
+  height: 6px;
+  border-radius: 4px;
+  background: var(--cor-borda);
+  margin: 10px 0 12px;
+  overflow: hidden;
+}
+
+.medidor__preenchimento {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--cor-ok);
+  transition: width 0.2s ease;
+}
+
+.medidor__preenchimento--baixo {
+  background: var(--cor-alerta);
+}
+
+.cartao-produto__aviso {
+  font-size: 12px;
+  color: var(--cor-alerta);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.cartao-produto__acoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.passo {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1.5px solid var(--cor-borda);
+  background: var(--cor-superficie);
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--cor-texto);
+}
+
+.passo--saida { color: var(--cor-alerta); border-color: var(--cor-alerta); }
+.passo--entrada { color: var(--cor-ok); border-color: var(--cor-ok); }
+
+.cartao-produto__acoes .espaco { flex: 1; }
+
+.link-discreto {
+  background: none;
+  border: none;
+  color: var(--cor-texto-suave);
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.estado-vazio {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Modal ---------- */
+
+.sobreposicao {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 15, 12, 0.55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal {
+  background: var(--cor-superficie);
+  width: 100%;
+  max-width: 480px;
+  border-radius: 16px 16px 0 0;
+  padding: 22px 20px 28px;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+@media (min-width: 560px) {
+  .sobreposicao { align-items: center; }
+  .modal { border-radius: var(--raio); }
+}
+
+.modal__titulo {
+  font-family: var(--fonte-display);
+  font-weight: 800;
+  font-size: 18px;
+  text-transform: uppercase;
+  margin: 0 0 14px;
+}
+
+.campo {
+  margin-bottom: 12px;
+}
+
+.campo label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.campo input, .campo select, .campo textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1.5px solid var(--cor-borda);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--cor-texto);
+  background: #fff;
+}
+
+.campo input:focus, .campo select:focus, .campo textarea:focus {
+  outline: 2px solid var(--cor-accent);
+  outline-offset: 1px;
+}
+
+.linha-campos {
+  display: flex;
+  gap: 10px;
+}
+
+.linha-campos .campo { flex: 1; }
+
+.modal__acoes {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.modal__acoes .botao { flex: 1; }
+
+.erro-formulario {
+  color: var(--cor-alerta);
+  font-size: 13px;
+  margin-top: -4px;
+  margin-bottom: 10px;
+  display: none;
+}
+
+/* ---------- Botão flutuante ---------- */
+
+.botao-flutuante {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--cor-accent);
+  color: #241400;
+  border: none;
+  font-size: 28px;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  cursor: pointer;
+  z-index: 20;
+}
+
+/* ---------- Painel da gerência ---------- */
+
+.grade-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 16px 0 22px;
+}
+
+.stat {
+  background: var(--cor-superficie);
+  border: 1.5px solid var(--cor-borda);
+  border-radius: var(--raio);
+  padding: 14px;
+}
+
+.stat__rotulo {
+  font-family: var(--fonte-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+}
+
+.stat__valor {
+  font-family: var(--fonte-display);
+  font-weight: 800;
+  font-size: 26px;
+  margin-top: 4px;
+}
+
+.stat--alerta .stat__valor { color: var(--cor-alerta); }
+
+.secao-titulo {
+  font-family: var(--fonte-display);
+  font-weight: 800;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 26px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.secao-titulo::after {
+  content: "";
+  flex: 1;
+  height: 1.5px;
+  background: var(--cor-borda);
+}
+
+.tabela-wrap {
+  overflow-x: auto;
+  border: 1.5px solid var(--cor-borda);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+}
+
+table.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+table.tabela th {
+  text-align: left;
+  font-family: var(--fonte-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+  padding: 10px 12px;
+  border-bottom: 1.5px solid var(--cor-borda);
+  white-space: nowrap;
+}
+
+table.tabela td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--cor-borda);
+  vertical-align: middle;
+}
+
+table.tabela tr:last-child td { border-bottom: none; }
+
+.badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--fonte-mono);
+}
+
+.badge--ok { background: #e2efe7; color: var(--cor-ok); }
+.badge--alerta { background: #f6e2df; color: var(--cor-alerta); }
+
+.lista-movimentacoes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.item-movimentacao {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--cor-superficie);
+  border: 1.5px solid var(--cor-borda);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13.5px;
+}
+
+.item-movimentacao__tipo {
+  font-family: var(--fonte-mono);
+  font-weight: 700;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.item-movimentacao__tipo--entrada { background: #e2efe7; color: var(--cor-ok); }
+.item-movimentacao__tipo--saida { background: #f6e2df; color: var(--cor-alerta); }
+
+.item-movimentacao__data {
+  margin-left: auto;
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+  font-family: var(--fonte-mono);
+  white-space: nowrap;
+}
+
+.rodape-nota {
+  text-align: center;
+  color: var(--cor-texto-suave);
+  font-size: 12px;
+  margin-top: 30px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
