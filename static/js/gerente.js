@@ -12,12 +12,12 @@ function formatarData(isoString) {
 }
 
 async function carregarPainel() {
-  const [respostaProdutos, respostaMovimentacoes] = await Promise.all([
+  const [respostaProdutos, respostaLogs] = await Promise.all([
     fetch("/api/produtos"),
-    fetch("/api/movimentacoes"),
+    fetch("/api/logs?tipos=entrada,saida&limite=15"),
   ]);
   const produtos = await respostaProdutos.json();
-  const movimentacoes = await respostaMovimentacoes.json();
+  const movimentacoes = await respostaLogs.json();
 
   renderizarStats(produtos);
   renderizarTabela(produtos);
@@ -70,7 +70,7 @@ function renderizarMovimentacoes(movimentacoes) {
     item.className = "item-movimentacao";
     item.innerHTML = `
       <span class="item-movimentacao__tipo item-movimentacao__tipo--${mov.tipo}">${mov.tipo}</span>
-      <span>${mov.produto_nome} — ${mov.quantidade} un.${mov.observacao ? " · " + mov.observacao : ""}</span>
+      <span>${mov.produto_nome} — ${mov.detalhes || ""}</span>
       <span class="item-movimentacao__data">${formatarData(mov.data)}</span>
     `;
     lista.appendChild(item);

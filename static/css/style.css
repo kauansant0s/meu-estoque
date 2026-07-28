@@ -526,6 +526,9 @@ table.tabela tr:last-child td { border-bottom: none; }
 
 .item-movimentacao__tipo--entrada { background: #e2efe7; color: var(--cor-ok); }
 .item-movimentacao__tipo--saida { background: #f6e2df; color: var(--cor-alerta); }
+.item-movimentacao__tipo--criacao { background: #e2ecf1; color: var(--cor-info); }
+.item-movimentacao__tipo--edicao { background: #f4e9d8; color: var(--cor-accent-escuro); }
+.item-movimentacao__tipo--exclusao { background: #2a2a26; color: #f0e9df; }
 
 .item-movimentacao__data {
   margin-left: auto;

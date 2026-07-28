@@ -28,19 +28,29 @@ def init_db():
             atualizado_em TEXT
         )
     """)
+    # Tabela única de logs: cobre criação, edição, exclusão e
+    # movimentação (entrada/saída). produto_nome fica salvo direto
+    # aqui (não é uma referência ao id do produto) porque queremos
+    # que o log continue existindo mesmo depois que o produto for
+    # excluído.
     conn.execute("""
-        CREATE TABLE IF NOT EXISTS movimentacoes (
+        CREATE TABLE IF NOT EXISTS logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            produto_id INTEGER NOT NULL,
             tipo TEXT NOT NULL,
-            quantidade INTEGER NOT NULL,
-            observacao TEXT,
-            data TEXT NOT NULL,
-            FOREIGN KEY (produto_id) REFERENCES produtos (id)
+            produto_nome TEXT NOT NULL,
+            detalhes TEXT,
+            data TEXT NOT NULL
         )
     """)
     conn.commit()
     conn.close()
+
+
+def registrar_log(conn, tipo, produto_nome, detalhes=""):
+    conn.execute(
+        "INSERT INTO logs (tipo, produto_nome, detalhes, data) VALUES (?, ?, ?, ?)",
+        (tipo, produto_nome, detalhes, datetime.now().isoformat())
+    )
 
 
 # ---------- Páginas ----------
@@ -59,7 +69,7 @@ def pagina_gerente():
 
 @app.route("/logs")
 def pagina_logs():
-    # Histórico completo de movimentações (quando e por quê)
+    # Histórico completo: criação, edição, exclusão e movimentações
     return render_template("logs.html")
 
 
@@ -91,8 +101,14 @@ def criar_produto():
         "INSERT INTO produtos (nome, observacoes, quantidade, quantidade_minima, preco, atualizado_em) VALUES (?, ?, ?, ?, ?, ?)",
         (nome, observacoes, quantidade, quantidade_minima, preco, datetime.now().isoformat())
     )
-    conn.commit()
     novo_id = cursor.lastrowid
+
+    detalhes = f"Cadastrado com quantidade {quantidade}, mínimo {quantidade_minima}, preço R$ {preco:.2f}"
+    if observacoes:
+        detalhes += f" — Obs: {observacoes}"
+    registrar_log(conn, "criacao", nome, detalhes)
+
+    conn.commit()
     produto = conn.execute("SELECT * FROM produtos WHERE id = ?", (novo_id,)).fetchone()
     conn.close()
 
@@ -113,10 +129,24 @@ def editar_produto(produto_id):
     quantidade_minima = int(dados.get("quantidade_minima", produto["quantidade_minima"]))
     preco = float(dados.get("preco", produto["preco"]))
 
+    # Monta uma descrição legível do que mudou, comparando valor antigo x novo
+    mudancas = []
+    if nome != produto["nome"]:
+        mudancas.append(f"nome '{produto['nome']}' → '{nome}'")
+    if observacoes != (produto["observacoes"] or ""):
+        mudancas.append("observações atualizadas")
+    if quantidade_minima != produto["quantidade_minima"]:
+        mudancas.append(f"mínimo {produto['quantidade_minima']} → {quantidade_minima}")
+    if abs(preco - produto["preco"]) > 0.001:
+        mudancas.append(f"preço R$ {produto['preco']:.2f} → R$ {preco:.2f}")
+    detalhes = "; ".join(mudancas) if mudancas else "Nenhuma alteração detectada"
+
     conn.execute(
         "UPDATE produtos SET nome = ?, observacoes = ?, quantidade_minima = ?, preco = ?, atualizado_em = ? WHERE id = ?",
         (nome, observacoes, quantidade_minima, preco, datetime.now().isoformat(), produto_id)
     )
+    registrar_log(conn, "edicao", nome, detalhes)
+
     conn.commit()
     produto = conn.execute("SELECT * FROM produtos WHERE id = ?", (produto_id,)).fetchone()
     conn.close()
@@ -126,8 +156,13 @@ def editar_produto(produto_id):
 @app.route("/api/produtos/<int:produto_id>", methods=["DELETE"])
 def excluir_produto(produto_id):
     conn = get_db()
+    produto = conn.execute("SELECT * FROM produtos WHERE id = ?", (produto_id,)).fetchone()
+    if produto is None:
+        conn.close()
+        return jsonify({"erro": "Produto não encontrado"}), 404
+
     conn.execute("DELETE FROM produtos WHERE id = ?", (produto_id,))
-    conn.execute("DELETE FROM movimentacoes WHERE produto_id = ?", (produto_id,))
+    registrar_log(conn, "exclusao", produto["nome"], "Produto removido do sistema")
     conn.commit()
     conn.close()
     return jsonify({"sucesso": True})
@@ -160,27 +195,31 @@ def movimentar_estoque(produto_id):
 
     agora = datetime.now().isoformat()
     conn.execute("UPDATE produtos SET quantidade = ?, atualizado_em = ? WHERE id = ?", (nova_quantidade, agora, produto_id))
-    conn.execute(
-        "INSERT INTO movimentacoes (produto_id, tipo, quantidade, observacao, data) VALUES (?, ?, ?, ?, ?)",
-        (produto_id, tipo, quantidade, observacao, agora)
-    )
+
+    detalhes = f"{quantidade} un. — Motivo: {observacao}" if observacao else f"{quantidade} un. — Motivo não informado"
+    registrar_log(conn, tipo, produto["nome"], detalhes)
+
     conn.commit()
     produto_atualizado = conn.execute("SELECT * FROM produtos WHERE id = ?", (produto_id,)).fetchone()
     conn.close()
     return jsonify(dict(produto_atualizado))
 
 
-@app.route("/api/movimentacoes", methods=["GET"])
-def listar_movimentacoes():
+@app.route("/api/logs", methods=["GET"])
+def listar_logs():
     limite = int(request.args.get("limite", 30))
+    tipos_param = request.args.get("tipos")  # ex: "entrada,saida"
+
     conn = get_db()
-    linhas = conn.execute("""
-        SELECT m.id, m.tipo, m.quantidade, m.observacao, m.data, p.nome as produto_nome
-        FROM movimentacoes m
-        JOIN produtos p ON p.id = m.produto_id
-        ORDER BY m.data DESC
-        LIMIT ?
-    """, (limite,)).fetchall()
+    if tipos_param:
+        tipos = tipos_param.split(",")
+        marcadores = ",".join(["?"] * len(tipos))
+        linhas = conn.execute(
+            f"SELECT * FROM logs WHERE tipo IN ({marcadores}) ORDER BY data DESC LIMIT ?",
+            (*tipos, limite)
+        ).fetchall()
+    else:
+        linhas = conn.execute("SELECT * FROM logs ORDER BY data DESC LIMIT ?", (limite,)).fetchall()
     conn.close()
     return jsonify([dict(l) for l in linhas])
 

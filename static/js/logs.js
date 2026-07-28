@@ -1,6 +1,14 @@
 // ------------------------------------------------------------
-// Logs — histórico completo de movimentações
+// Logs — histórico completo: criação, edição, exclusão e movimentações
 // ------------------------------------------------------------
+
+const rotulos = {
+  criacao: "Criação",
+  edicao: "Edição",
+  exclusao: "Exclusão",
+  entrada: "Entrada",
+  saida: "Saída",
+};
 
 function formatarData(isoString) {
   const data = new Date(isoString);
@@ -8,24 +16,24 @@ function formatarData(isoString) {
 }
 
 async function carregarLogs() {
-  const resposta = await fetch("/api/movimentacoes?limite=200");
-  const movimentacoes = await resposta.json();
+  const resposta = await fetch("/api/logs?limite=200");
+  const logs = await resposta.json();
 
   const lista = document.getElementById("lista-logs");
   lista.innerHTML = "";
 
-  if (movimentacoes.length === 0) {
-    lista.innerHTML = `<div class="estado-vazio">Nenhuma movimentação registrada ainda.</div>`;
+  if (logs.length === 0) {
+    lista.innerHTML = `<div class="estado-vazio">Nenhum registro ainda.</div>`;
     return;
   }
 
-  movimentacoes.forEach(mov => {
+  logs.forEach(log => {
     const item = document.createElement("div");
     item.className = "item-movimentacao";
     item.innerHTML = `
-      <span class="item-movimentacao__tipo item-movimentacao__tipo--${mov.tipo}">${mov.tipo}</span>
-      <span>${mov.produto_nome} — ${mov.quantidade} un.${mov.observacao ? " · Motivo: " + mov.observacao : " · Sem motivo informado"}</span>
-      <span class="item-movimentacao__data">${formatarData(mov.data)}</span>
+      <span class="item-movimentacao__tipo item-movimentacao__tipo--${log.tipo}">${rotulos[log.tipo] || log.tipo}</span>
+      <span>${log.produto_nome} — ${log.detalhes || ""}</span>
+      <span class="item-movimentacao__data">${formatarData(log.data)}</span>
     `;
     lista.appendChild(item);
   });

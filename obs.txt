@@ -4,7 +4,13 @@ git push
 
 
 
-nome dos produtos ficam por padrão tudo em maiusculo na hora de digitar, mesmo se o capslock estiver desativado, mas se eu apertar shift ai a letra fica minuscula.
-quando clica em adicionar produto, ja fica em destaque o campo do nome do produto
-não precisa de categoria, só um ultimo campo de "observações", que é ocional de ser preenchido
-criar um menu lateral no lado superior esquerdo com algumas opções, como perfil, ajustes e logs. os logs têm que ficar salvo para a pessoa poder ver quando ocorreram as alterações do estoque e o motivo delas
+criar um menu com os simbolos de home, perfil e logs no canto superior direito para ficar mais rápido de acessar. (home é a página do estoque)
+svg home: <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 36.6666V19.9999H25V36.6666M5 14.9999L20 3.33325L35 14.9999V33.3333C35 34.2173 34.6488 35.0652 34.0237 35.6903C33.3986 36.3154 32.5507 36.6666 31.6667 36.6666H8.33333C7.44928 36.6666 6.60143 36.3154 5.97631 35.6903C5.35119 35.0652 5 34.2173 5 33.3333V14.9999Z" stroke="#1E1E1E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+svg perfil: <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M19.9998 20.0001C18.1665 20.0001 16.5971 19.3473 15.2915 18.0417C13.9859 16.7362 13.3332 15.1667 13.3332 13.3334C13.3332 11.5001 13.9859 9.93064 15.2915 8.62508C16.5971 7.31953 18.1665 6.66675 19.9998 6.66675C21.8332 6.66675 23.4026 7.31953 24.7082 8.62508C26.0137 9.93064 26.6665 11.5001 26.6665 13.3334C26.6665 15.1667 26.0137 16.7362 24.7082 18.0417C23.4026 19.3473 21.8332 20.0001 19.9998 20.0001ZM6.6665 33.3334V28.6667C6.6665 27.7223 6.90956 26.8542 7.39567 26.0626C7.88178 25.2709 8.52761 24.6667 9.33317 24.2501C11.0554 23.389 12.8054 22.7431 14.5832 22.3126C16.3609 21.882 18.1665 21.6667 19.9998 21.6667C21.8332 21.6667 23.6387 21.882 25.4165 22.3126C27.1943 22.7431 28.9443 23.389 30.6665 24.2501C31.4721 24.6667 32.1179 25.2709 32.604 26.0626C33.0901 26.8542 33.3332 27.7223 33.3332 28.6667V33.3334H6.6665ZM9.99984 30.0001H29.9998V28.6667C29.9998 28.3612 29.9234 28.0834 29.7707 27.8334C29.6179 27.5834 29.4165 27.389 29.1665 27.2501C27.6665 26.5001 26.1526 25.9376 24.6248 25.5626C23.0971 25.1876 21.5554 25.0001 19.9998 25.0001C18.4443 25.0001 16.9026 25.1876 15.3748 25.5626C13.8471 25.9376 12.3332 26.5001 10.8332 27.2501C10.5832 27.389 10.3818 27.5834 10.229 27.8334C10.0762 28.0834 9.99984 28.3612 9.99984 28.6667V30.0001ZM19.9998 16.6667C20.9165 16.6667 21.7012 16.3404 22.354 15.6876C23.0068 15.0348 23.3332 14.2501 23.3332 13.3334C23.3332 12.4167 23.0068 11.632 22.354 10.9792C21.7012 10.3265 20.9165 10.0001 19.9998 10.0001C19.0832 10.0001 18.2984 10.3265 17.6457 10.9792C16.9929 11.632 16.6665 12.4167 16.6665 13.3334C16.6665 14.2501 16.9929 15.0348 17.6457 15.6876C18.2984 16.3404 19.0832 16.6667 19.9998 16.6667Z" fill="#1D1B20"/>
+</svg>
+svg logs: pode escolher, não achei um que combinasse
+tirar parte do valor do produto, é desnecessária agr
+no campo dos números, no momento eu preciso apagar o 0 que ja vem neles, trocar isso, eu quero que, ou não venha nada neles, ai eu só seleciono o campo e digito, ou quando eu selecionar e digitar, ele desconsidera o 0, faça o que for mais fácil e leve. mesma coisa na hora de clicar no simbolo de + e - para alterar
