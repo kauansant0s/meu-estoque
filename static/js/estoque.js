@@ -16,10 +16,6 @@ async function carregarProdutos() {
   renderizarLista();
 }
 
-function formatarPreco(valor) {
-  return "R$ " + Number(valor).toFixed(2).replace(".", ",");
-}
-
 function renderizarLista() {
   const termo = campoBusca.value.trim().toLowerCase();
   const filtrados = produtos.filter(p => p.nome.toLowerCase().includes(termo));
@@ -53,7 +49,6 @@ function criarCartaoProduto(produto) {
         <span class="cartao-produto__quantidade">${produto.quantidade}</span>
         <span class="cartao-produto__unidade">un.</span>
       </div>
-      <div class="cartao-produto__preco">${formatarPreco(produto.preco)} / un.</div>
     </div>
 
     <div class="medidor">
@@ -114,7 +109,6 @@ function abrirModalProduto(produto) {
   document.getElementById("produto-quantidade").value = produto ? produto.quantidade : 0;
   document.getElementById("produto-quantidade").disabled = !!produto; // qtd só muda via movimentação
   document.getElementById("produto-minimo").value = produto ? produto.quantidade_minima : 0;
-  document.getElementById("produto-preco").value = produto ? produto.preco : 0;
   document.getElementById("produto-observacoes").value = produto ? (produto.observacoes || "") : "";
   sobreposicaoProduto.classList.remove("oculto");
 
@@ -137,7 +131,6 @@ formProduto.addEventListener("submit", async (evento) => {
     nome: document.getElementById("produto-nome").value.trim(),
     observacoes: document.getElementById("produto-observacoes").value.trim(),
     quantidade_minima: document.getElementById("produto-minimo").value,
-    preco: document.getElementById("produto-preco").value,
   };
   if (!id) {
     corpo.quantidade = document.getElementById("produto-quantidade").value;
@@ -232,14 +225,10 @@ formMovimento.addEventListener("submit", async (evento) => {
 
 // ------------------------------------------------------------
 // Maiúsculo invertido: sem shift = MAIÚSCULO, com shift = minúsculo
-// (o pedido foi pra facilitar digitar nome de produto sem precisar
-// segurar Caps Lock o tempo todo)
 // ------------------------------------------------------------
 
 function aplicarMaiusculoInvertido(input) {
   input.addEventListener("keydown", (evento) => {
-    // Só intercepta teclas de letra (a-z, A-Z). Backspace, setas,
-    // Tab, etc. continuam funcionando normalmente.
     const ehLetra = evento.key.length === 1 && /[a-zA-Z]/.test(evento.key);
     if (!ehLetra) return;
 
@@ -253,12 +242,27 @@ function aplicarMaiusculoInvertido(input) {
     input.value = valorAtual.slice(0, inicio) + letra + valorAtual.slice(fim);
     input.selectionStart = input.selectionEnd = inicio + 1;
 
-    // Dispara o evento "input" manualmente, já que escrevemos o
-    // valor na mão — sem isso, outros trechos de código que "escutam"
-    // mudanças nesse campo não seriam avisados.
     input.dispatchEvent(new Event("input", { bubbles: true }));
   });
 }
+
+// ------------------------------------------------------------
+// Seleciona todo o conteúdo do campo ao focar — assim, ao digitar,
+// o valor antigo (ex: o "0" padrão) é substituído na hora, sem
+// precisar apagar na mão primeiro.
+// ------------------------------------------------------------
+
+function selecionarTudoAoFocar(input) {
+  input.addEventListener("focus", () => {
+    setTimeout(() => input.select(), 0);
+  });
+}
+
+[
+  document.getElementById("produto-quantidade"),
+  document.getElementById("produto-minimo"),
+  document.getElementById("movimento-quantidade"),
+].forEach(selecionarTudoAoFocar);
 
 aplicarMaiusculoInvertido(document.getElementById("produto-nome"));
 

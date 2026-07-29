@@ -56,7 +56,7 @@ button { font-family: inherit; }
   z-index: 10;
   background: var(--cor-texto);
   color: var(--cor-superficie);
-  padding: 18px 20px 16px 60px;
+  padding: 18px 130px 16px 60px;
   border-bottom: 4px solid var(--cor-accent);
 }
 
@@ -176,7 +176,6 @@ button { font-family: inherit; }
 }
 
 .cartao-produto::before {
-  /* furinho de etiqueta */
   content: "";
   position: absolute;
   top: 12px;
@@ -186,6 +185,14 @@ button { font-family: inherit; }
   border-radius: 50%;
   background: var(--cor-fundo);
   border: 1.5px solid var(--cor-borda);
+}
+
+.cartao-produto__categoria {
+  font-family: var(--fonte-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
 }
 
 .cartao-produto__nome {
@@ -570,6 +577,48 @@ table.tabela tr:last-child td { border-bottom: none; }
   height: 2.5px;
   background: var(--cor-superficie);
   border-radius: 2px;
+}
+
+.nav-rapida {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 40;
+  display: flex;
+  gap: 4px;
+}
+
+.nav-rapida__item {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--cor-superficie);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav-rapida__item:hover {
+  background: rgba(251, 250, 247, 0.12);
+}
+
+.nav-rapida__item:disabled {
+  color: rgba(251, 250, 247, 0.35);
+  cursor: not-allowed;
+}
+
+.nav-rapida__item:disabled:hover {
+  background: transparent;
+}
+
+@media (max-width: 380px) {
+  .nav-rapida__item { width: 34px; height: 34px; }
+  .nav-rapida__item svg { width: 19px; height: 19px; }
+  .topo { padding-right: 112px; }
 }
 
 .fundo-menu {
