@@ -120,6 +120,74 @@ button { font-family: inherit; }
   outline-offset: 1px;
 }
 
+/* ---------- Filtro e ordenação ---------- */
+
+.barra-filtros {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.botao-filtro {
+  background: var(--cor-superficie);
+  border: 1.5px solid var(--cor-borda);
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.botao-filtro__contagem {
+  background: var(--cor-accent);
+  color: #241400;
+  border-radius: 20px;
+  padding: 1px 7px;
+  font-family: var(--fonte-mono);
+  font-size: 11px;
+}
+
+.painel-opcoes {
+  background: var(--cor-superficie);
+  border: 1.5px solid var(--cor-borda);
+  border-radius: var(--raio);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.painel-opcoes__titulo {
+  font-family: var(--fonte-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+  margin-bottom: 10px;
+}
+
+.opcao-checkbox, .opcao-radio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 2px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.opcao-checkbox input, .opcao-radio input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--cor-accent-escuro);
+  cursor: pointer;
+}
+
+.opcao-checkbox:not(:last-child), .opcao-radio:not(:last-child) {
+  border-bottom: 1px solid var(--cor-fundo);
+}
+
 .botao {
   border: none;
   border-radius: var(--raio);
@@ -536,6 +604,43 @@ table.tabela tr:last-child td { border-bottom: none; }
 .item-movimentacao__tipo--criacao { background: #e2ecf1; color: var(--cor-info); }
 .item-movimentacao__tipo--edicao { background: #f4e9d8; color: var(--cor-accent-escuro); }
 .item-movimentacao__tipo--exclusao { background: #2a2a26; color: #f0e9df; }
+
+.item-movimentacao__conteudo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.item-movimentacao__texto {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-movimentacao__expandir {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--cor-info);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 4px;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.item-movimentacao--expandido {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.item-movimentacao--expandido .item-movimentacao__texto {
+  white-space: normal;
+  overflow: visible;
+}
 
 .item-movimentacao__data {
   margin-left: auto;

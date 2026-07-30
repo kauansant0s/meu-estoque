@@ -2,21 +2,14 @@ git add .
 git commit -m "novas mudanças"
 git push
 
-retirar o campo de estoque inicial
-
-retirar a informação de preço dos logs
-
-quando as observações forem editadas, aparecer nos logs a obs que era antes e a nova, caso fique muito grande, aparece uma setinha escrito "ver tudo" ou "mais informações", algo assim. ai ele expande para mostrar tudo, mas só se não caber tudo na mesma linha.
-
-qnd fica abaixo do estoque minimo, a linha verde parece que diminui, eu quero que fique do mesmo tamanho, a cor pode continuar trocando pra ficar vermelho
-
-
-
-
 
 criar os menus de "filtro" e "ordenar por" abaixo da caixa de pesquisa, minha colega tem tres estoques para cuidar, no filtro vai aparecer pra ela escolher qual estoque ela quer ver, as opções são "casa", "sala de convivio" e "servidor", ai tem meio que um titulo "mostrar estoque(s)" e ai caixas com as tres opções. e o ordenar por, vai ter as opções de "ordem alfabética", "ordem de criação", "último modificado" e "mais próximo de acabar"
 
 consequentemente, na hora de criar e editar um produto tem que ter o menu para selecionar de qual estoque ele é
+
+
+
+
 
 pode criar a página das configurações tbm, nessa página por enquanto vai ter a seção para excluir, criar e editar os estoques
 

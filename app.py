@@ -6,6 +6,12 @@ import os
 app = Flask(__name__)
 DB_PATH = os.path.join(os.path.dirname(__file__), "estoque.db")
 
+ROTULOS_ESTOQUE = {
+    "casa": "Casa",
+    "sala_convivio": "Sala de convívio",
+    "servidor": "Servidor",
+}
+
 
 # ---------- Banco de dados ----------
 
@@ -22,9 +28,11 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
             observacoes TEXT,
+            estoque TEXT NOT NULL DEFAULT 'casa',
             quantidade INTEGER NOT NULL DEFAULT 0,
             quantidade_minima INTEGER NOT NULL DEFAULT 0,
             preco REAL NOT NULL DEFAULT 0,
+            criado_em TEXT,
             atualizado_em TEXT
         )
     """)
@@ -51,6 +59,10 @@ def registrar_log(conn, tipo, produto_nome, detalhes=""):
         "INSERT INTO logs (tipo, produto_nome, detalhes, data) VALUES (?, ?, ?, ?)",
         (tipo, produto_nome, detalhes, datetime.now().isoformat())
     )
+
+
+def rotulo_estoque(chave):
+    return ROTULOS_ESTOQUE.get(chave, chave)
 
 
 # ---------- Páginas ----------
@@ -92,18 +104,19 @@ def criar_produto():
         return jsonify({"erro": "Nome do produto é obrigatório"}), 400
 
     observacoes = (dados.get("observacoes") or "").strip()
+    estoque = (dados.get("estoque") or "casa").strip()
     quantidade = int(dados.get("quantidade", 0))
     quantidade_minima = int(dados.get("quantidade_minima", 0))
-    preco = float(dados.get("preco", 0))
 
+    agora = datetime.now().isoformat()
     conn = get_db()
     cursor = conn.execute(
-        "INSERT INTO produtos (nome, observacoes, quantidade, quantidade_minima, preco, atualizado_em) VALUES (?, ?, ?, ?, ?, ?)",
-        (nome, observacoes, quantidade, quantidade_minima, preco, datetime.now().isoformat())
+        "INSERT INTO produtos (nome, observacoes, estoque, quantidade, quantidade_minima, criado_em, atualizado_em) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (nome, observacoes, estoque, quantidade, quantidade_minima, agora, agora)
     )
     novo_id = cursor.lastrowid
 
-    detalhes = f"Cadastrado com quantidade {quantidade}, mínimo {quantidade_minima}, preço R$ {preco:.2f}"
+    detalhes = f"Cadastrado em '{rotulo_estoque(estoque)}' com estoque mínimo {quantidade_minima}"
     if observacoes:
         detalhes += f" — Obs: {observacoes}"
     registrar_log(conn, "criacao", nome, detalhes)
@@ -126,24 +139,26 @@ def editar_produto(produto_id):
 
     nome = dados.get("nome", produto["nome"])
     observacoes = dados.get("observacoes", produto["observacoes"])
+    estoque = dados.get("estoque", produto["estoque"])
     quantidade_minima = int(dados.get("quantidade_minima", produto["quantidade_minima"]))
-    preco = float(dados.get("preco", produto["preco"]))
 
     # Monta uma descrição legível do que mudou, comparando valor antigo x novo
     mudancas = []
     if nome != produto["nome"]:
         mudancas.append(f"nome '{produto['nome']}' → '{nome}'")
     if observacoes != (produto["observacoes"] or ""):
-        mudancas.append("observações atualizadas")
+        antiga = produto["observacoes"] or "(vazio)"
+        nova = observacoes or "(vazio)"
+        mudancas.append(f"observações: '{antiga}' → '{nova}'")
+    if estoque != produto["estoque"]:
+        mudancas.append(f"estoque '{rotulo_estoque(produto['estoque'])}' → '{rotulo_estoque(estoque)}'")
     if quantidade_minima != produto["quantidade_minima"]:
         mudancas.append(f"mínimo {produto['quantidade_minima']} → {quantidade_minima}")
-    if abs(preco - produto["preco"]) > 0.001:
-        mudancas.append(f"preço R$ {produto['preco']:.2f} → R$ {preco:.2f}")
     detalhes = "; ".join(mudancas) if mudancas else "Nenhuma alteração detectada"
 
     conn.execute(
-        "UPDATE produtos SET nome = ?, observacoes = ?, quantidade_minima = ?, preco = ?, atualizado_em = ? WHERE id = ?",
-        (nome, observacoes, quantidade_minima, preco, datetime.now().isoformat(), produto_id)
+        "UPDATE produtos SET nome = ?, observacoes = ?, estoque = ?, quantidade_minima = ?, atualizado_em = ? WHERE id = ?",
+        (nome, observacoes, estoque, quantidade_minima, datetime.now().isoformat(), produto_id)
     )
     registrar_log(conn, "edicao", nome, detalhes)
 

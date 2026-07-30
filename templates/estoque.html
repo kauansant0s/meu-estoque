@@ -14,6 +14,49 @@
     <input type="text" id="campo-busca" class="campo-busca" placeholder="Buscar produto...">
   </div>
 
+  <div class="barra-filtros">
+    <button type="button" class="botao-filtro" id="botao-abrir-filtro">
+      Filtro <span class="botao-filtro__contagem oculto" id="contagem-filtro"></span>
+    </button>
+    <button type="button" class="botao-filtro" id="botao-abrir-ordenar">Ordenar por</button>
+  </div>
+
+  <div class="painel-opcoes oculto" id="painel-filtro">
+    <div class="painel-opcoes__titulo">Mostrar estoque(s)</div>
+    <label class="opcao-checkbox">
+      <input type="checkbox" class="filtro-estoque" value="casa" checked>
+      Casa
+    </label>
+    <label class="opcao-checkbox">
+      <input type="checkbox" class="filtro-estoque" value="sala_convivio" checked>
+      Sala de convívio
+    </label>
+    <label class="opcao-checkbox">
+      <input type="checkbox" class="filtro-estoque" value="servidor" checked>
+      Servidor
+    </label>
+  </div>
+
+  <div class="painel-opcoes oculto" id="painel-ordenar">
+    <div class="painel-opcoes__titulo">Ordenar por</div>
+    <label class="opcao-radio">
+      <input type="radio" name="ordenar-por" value="alfabetica" checked>
+      Ordem alfabética
+    </label>
+    <label class="opcao-radio">
+      <input type="radio" name="ordenar-por" value="criacao">
+      Ordem de criação
+    </label>
+    <label class="opcao-radio">
+      <input type="radio" name="ordenar-por" value="modificado">
+      Último modificado
+    </label>
+    <label class="opcao-radio">
+      <input type="radio" name="ordenar-por" value="acabando">
+      Mais próximo de acabar
+    </label>
+  </div>
+
   <div id="lista-produtos" class="lista-produtos">
     <!-- produtos entram aqui via JavaScript -->
   </div>
@@ -36,15 +79,17 @@
         <label for="produto-nome">Nome do produto</label>
         <input type="text" id="produto-nome" required>
       </div>
-      <div class="linha-campos">
-        <div class="campo">
-          <label for="produto-quantidade">Quantidade inicial</label>
-          <input type="number" id="produto-quantidade" min="0" value="0">
-        </div>
-        <div class="campo">
-          <label for="produto-minimo">Estoque mínimo</label>
-          <input type="number" id="produto-minimo" min="0" value="0">
-        </div>
+      <div class="campo">
+        <label for="produto-estoque">Estoque</label>
+        <select id="produto-estoque">
+          <option value="casa">Casa</option>
+          <option value="sala_convivio">Sala de convívio</option>
+          <option value="servidor">Servidor</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="produto-minimo">Estoque mínimo</label>
+        <input type="number" id="produto-minimo" min="0" value="0">
       </div>
       <div class="campo">
         <label for="produto-observacoes">Observações (opcional)</label>

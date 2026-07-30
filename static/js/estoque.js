@@ -3,6 +3,14 @@
 // ------------------------------------------------------------
 
 let produtos = [];
+let filtroEstoques = new Set(["casa", "sala_convivio", "servidor"]);
+let ordenarPor = "alfabetica";
+
+const ROTULOS_ESTOQUE = {
+  casa: "Casa",
+  sala_convivio: "Sala de convívio",
+  servidor: "Servidor",
+};
 
 const listaEl = document.getElementById("lista-produtos");
 const estadoVazioEl = document.getElementById("estado-vazio");
@@ -16,9 +24,33 @@ async function carregarProdutos() {
   renderizarLista();
 }
 
+// ------------------------------------------------------------
+// Filtro (quais estoques mostrar) e ordenação
+// ------------------------------------------------------------
+
+function ordenarProdutos(lista) {
+  const copia = [...lista];
+
+  if (ordenarPor === "alfabetica") {
+    copia.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+  } else if (ordenarPor === "criacao") {
+    copia.sort((a, b) => new Date(a.criado_em) - new Date(b.criado_em));
+  } else if (ordenarPor === "modificado") {
+    copia.sort((a, b) => new Date(b.atualizado_em) - new Date(a.atualizado_em));
+  } else if (ordenarPor === "acabando") {
+    copia.sort((a, b) => (a.quantidade - a.quantidade_minima) - (b.quantidade - b.quantidade_minima));
+  }
+
+  return copia;
+}
+
 function renderizarLista() {
   const termo = campoBusca.value.trim().toLowerCase();
-  const filtrados = produtos.filter(p => p.nome.toLowerCase().includes(termo));
+
+  let filtrados = produtos.filter(p =>
+    p.nome.toLowerCase().includes(termo) && filtroEstoques.has(p.estoque)
+  );
+  filtrados = ordenarProdutos(filtrados);
 
   listaEl.innerHTML = "";
 
@@ -35,13 +67,12 @@ function renderizarLista() {
 
 function criarCartaoProduto(produto) {
   const abaixoDoMinimo = produto.quantidade <= produto.quantidade_minima;
-  const proporcao = produto.quantidade_minima > 0
-    ? Math.min(100, Math.round((produto.quantidade / (produto.quantidade_minima * 2)) * 100))
-    : 100;
+  const rotuloEstoque = ROTULOS_ESTOQUE[produto.estoque] || produto.estoque;
 
   const div = document.createElement("div");
   div.className = "cartao-produto";
   div.innerHTML = `
+    <div class="cartao-produto__categoria">${rotuloEstoque}</div>
     <div class="cartao-produto__nome">${produto.nome}</div>
 
     <div class="cartao-produto__linha">
@@ -52,7 +83,7 @@ function criarCartaoProduto(produto) {
     </div>
 
     <div class="medidor">
-      <div class="medidor__preenchimento ${abaixoDoMinimo ? "medidor__preenchimento--baixo" : ""}" style="width:${proporcao}%"></div>
+      <div class="medidor__preenchimento ${abaixoDoMinimo ? "medidor__preenchimento--baixo" : ""}"></div>
     </div>
 
     ${abaixoDoMinimo ? `<div class="cartao-produto__aviso">Abaixo do estoque mínimo (${produto.quantidade_minima})</div>` : ""}
@@ -91,6 +122,53 @@ listaEl.addEventListener("click", (evento) => {
 });
 
 // ------------------------------------------------------------
+// Painéis de filtro e ordenação
+// ------------------------------------------------------------
+
+const painelFiltro = document.getElementById("painel-filtro");
+const painelOrdenar = document.getElementById("painel-ordenar");
+const contagemFiltro = document.getElementById("contagem-filtro");
+
+function alternarPainel(painelAlvo) {
+  [painelFiltro, painelOrdenar].forEach(painel => {
+    if (painel === painelAlvo) {
+      painel.classList.toggle("oculto");
+    } else {
+      painel.classList.add("oculto");
+    }
+  });
+}
+
+document.getElementById("botao-abrir-filtro").addEventListener("click", () => alternarPainel(painelFiltro));
+document.getElementById("botao-abrir-ordenar").addEventListener("click", () => alternarPainel(painelOrdenar));
+
+document.querySelectorAll(".filtro-estoque").forEach(caixa => {
+  caixa.addEventListener("change", () => {
+    filtroEstoques = new Set(
+      [...document.querySelectorAll(".filtro-estoque:checked")].map(c => c.value)
+    );
+
+    // Mostra "2/3" etc. no botão quando nem todos os estoques estão marcados
+    const total = document.querySelectorAll(".filtro-estoque").length;
+    if (filtroEstoques.size < total) {
+      contagemFiltro.textContent = `${filtroEstoques.size}/${total}`;
+      contagemFiltro.classList.remove("oculto");
+    } else {
+      contagemFiltro.classList.add("oculto");
+    }
+
+    renderizarLista();
+  });
+});
+
+document.querySelectorAll('input[name="ordenar-por"]').forEach(botaoRadio => {
+  botaoRadio.addEventListener("change", () => {
+    ordenarPor = botaoRadio.value;
+    renderizarLista();
+  });
+});
+
+// ------------------------------------------------------------
 // Modal: novo / editar produto
 // ------------------------------------------------------------
 
@@ -106,8 +184,12 @@ function abrirModalProduto(produto) {
   document.getElementById("titulo-modal-produto").textContent = produto ? "Editar produto" : "Novo produto";
   document.getElementById("produto-id").value = produto ? produto.id : "";
   document.getElementById("produto-nome").value = produto ? produto.nome : "";
-  document.getElementById("produto-quantidade").value = produto ? produto.quantidade : 0;
-  document.getElementById("produto-quantidade").disabled = !!produto; // qtd só muda via movimentação
+
+  // Ao criar um produto novo, se só um estoque estiver marcado no filtro,
+  // já deixa ele pré-selecionado (provavelmente é onde ela está trabalhando)
+  const estoquePadrao = filtroEstoques.size === 1 ? [...filtroEstoques][0] : "casa";
+  document.getElementById("produto-estoque").value = produto ? produto.estoque : estoquePadrao;
+
   document.getElementById("produto-minimo").value = produto ? produto.quantidade_minima : 0;
   document.getElementById("produto-observacoes").value = produto ? (produto.observacoes || "") : "";
   sobreposicaoProduto.classList.remove("oculto");
@@ -129,12 +211,10 @@ formProduto.addEventListener("submit", async (evento) => {
   const id = document.getElementById("produto-id").value;
   const corpo = {
     nome: document.getElementById("produto-nome").value.trim(),
+    estoque: document.getElementById("produto-estoque").value,
     observacoes: document.getElementById("produto-observacoes").value.trim(),
     quantidade_minima: document.getElementById("produto-minimo").value,
   };
-  if (!id) {
-    corpo.quantidade = document.getElementById("produto-quantidade").value;
-  }
 
   const url = id ? `/api/produtos/${id}` : "/api/produtos";
   const metodo = id ? "PUT" : "POST";
@@ -225,10 +305,14 @@ formMovimento.addEventListener("submit", async (evento) => {
 
 // ------------------------------------------------------------
 // Maiúsculo invertido: sem shift = MAIÚSCULO, com shift = minúsculo
+// (o pedido foi pra facilitar digitar nome de produto sem precisar
+// segurar Caps Lock o tempo todo)
 // ------------------------------------------------------------
 
 function aplicarMaiusculoInvertido(input) {
   input.addEventListener("keydown", (evento) => {
+    // Só intercepta teclas de letra (a-z, A-Z). Backspace, setas,
+    // Tab, etc. continuam funcionando normalmente.
     const ehLetra = evento.key.length === 1 && /[a-zA-Z]/.test(evento.key);
     if (!ehLetra) return;
 
@@ -242,6 +326,9 @@ function aplicarMaiusculoInvertido(input) {
     input.value = valorAtual.slice(0, inicio) + letra + valorAtual.slice(fim);
     input.selectionStart = input.selectionEnd = inicio + 1;
 
+    // Dispara o evento "input" manualmente, já que escrevemos o
+    // valor na mão — sem isso, outros trechos de código que "escutam"
+    // mudanças nesse campo não seriam avisados.
     input.dispatchEvent(new Event("input", { bubbles: true }));
   });
 }
@@ -254,12 +341,13 @@ function aplicarMaiusculoInvertido(input) {
 
 function selecionarTudoAoFocar(input) {
   input.addEventListener("focus", () => {
+    // setTimeout(0) garante que funciona também em navegadores de
+    // celular, onde o foco e a seleção podem brigar se feitos juntos.
     setTimeout(() => input.select(), 0);
   });
 }
 
 [
-  document.getElementById("produto-quantidade"),
   document.getElementById("produto-minimo"),
   document.getElementById("movimento-quantidade"),
 ].forEach(selecionarTudoAoFocar);
