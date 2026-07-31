@@ -2,18 +2,7 @@ git add .
 git commit -m "novas mudanças"
 git push
 
-
-pode criar a página das configurações tbm, nessa página por enquanto vai ter só a seção para excluir, criar e editar os estoques
-
-adicionar o botão de notificação do lado dos logs tbm, no futuro, qnd criarmos a parte de usuário e logins e tipos de usuários, os outros empregados vão poder pedir as coisas que eles precisam, e ai minha colega vai ver por ali uma vez por semana para entregar as compras. por enquanto pode só aparecer a mensagem de "nenhuma notificação"
-
-svg notificações: <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M22.8833 34.9999C22.5903 35.505 22.1697 35.9243 21.6637 36.2158C21.1577 36.5073 20.584 36.6607 20 36.6607C19.416 36.6607 18.8423 36.5073 18.3363 36.2158C17.8303 35.9243 17.4097 35.505 17.1167 34.9999M30 13.3333C30 10.6811 28.9464 8.13755 27.0711 6.26218C25.1957 4.38682 22.6522 3.33325 20 3.33325C17.3478 3.33325 14.8043 4.38682 12.9289 6.26218C11.0536 8.13755 10 10.6811 10 13.3333C10 24.9999 5 28.3333 5 28.3333H35C35 28.3333 30 24.9999 30 13.3333Z" stroke="#1E1E1E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-
-
-
-
+não ta deixando adicionar produtos, diz que eu tenho que escolher um estoque mesmo quando eu ja tenho um escolhido, e eu queria que a criação, alteração e deletamento de estoques ficasse nos logs tbm
 
 outra coisa que quero adicionar é a possibilidade de alterar a forma de visualização dos produtos, "cards em lista" (seria essa que está agora), "lista" (ocuparia uma largura maior da tela e seria menor em altura) e "grade" (que ai ficaria os cardzinhos menores, da pra mostrar uns 6 por linha). então ficaria os dois menus, de filtro e de ordenar e esse toggle dos tres jeitos de ver os produtos, os tres lado a lado embaixo da caixa de pesquisa
 
