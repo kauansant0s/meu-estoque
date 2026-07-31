@@ -604,6 +604,9 @@ table.tabela tr:last-child td { border-bottom: none; }
 .item-movimentacao__tipo--criacao { background: #e2ecf1; color: var(--cor-info); }
 .item-movimentacao__tipo--edicao { background: #f4e9d8; color: var(--cor-accent-escuro); }
 .item-movimentacao__tipo--exclusao { background: #2a2a26; color: #f0e9df; }
+.item-movimentacao__tipo--estoque_criado { background: #e2ecf1; color: var(--cor-info); }
+.item-movimentacao__tipo--estoque_editado { background: #f4e9d8; color: var(--cor-accent-escuro); }
+.item-movimentacao__tipo--estoque_excluido { background: #2a2a26; color: #f0e9df; }
 
 .item-movimentacao__conteudo {
   flex: 1;

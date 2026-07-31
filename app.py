@@ -132,6 +132,7 @@ def criar_estoque():
         "INSERT INTO estoques (nome, criado_em) VALUES (?, ?)",
         (nome, datetime.now().isoformat())
     )
+    registrar_log(conn, "estoque_criado", nome, "Novo estoque criado")
     conn.commit()
     estoque = conn.execute("SELECT * FROM estoques WHERE id = ?", (cursor.lastrowid,)).fetchone()
     conn.close()
@@ -151,7 +152,10 @@ def editar_estoque(estoque_id):
         conn.close()
         return jsonify({"erro": "Estoque não encontrado"}), 404
 
+    nome_antigo = estoque["nome"]
     conn.execute("UPDATE estoques SET nome = ? WHERE id = ?", (nome, estoque_id))
+    if nome != nome_antigo:
+        registrar_log(conn, "estoque_editado", nome, f"Nome alterado de '{nome_antigo}' para '{nome}'")
     conn.commit()
     estoque = conn.execute("SELECT * FROM estoques WHERE id = ?", (estoque_id,)).fetchone()
     conn.close()
@@ -161,6 +165,11 @@ def editar_estoque(estoque_id):
 @app.route("/api/estoques/<int:estoque_id>", methods=["DELETE"])
 def excluir_estoque(estoque_id):
     conn = get_db()
+    estoque = conn.execute("SELECT * FROM estoques WHERE id = ?", (estoque_id,)).fetchone()
+    if estoque is None:
+        conn.close()
+        return jsonify({"erro": "Estoque não encontrado"}), 404
+
     em_uso = conn.execute(
         "SELECT COUNT(*) as total FROM produtos WHERE estoque_id = ?", (estoque_id,)
     ).fetchone()["total"]
@@ -172,6 +181,7 @@ def excluir_estoque(estoque_id):
         }), 400
 
     conn.execute("DELETE FROM estoques WHERE id = ?", (estoque_id,))
+    registrar_log(conn, "estoque_excluido", estoque["nome"], "Estoque removido do sistema")
     conn.commit()
     conn.close()
     return jsonify({"sucesso": True})

@@ -8,6 +8,9 @@ const rotulos = {
   exclusao: "Exclusão",
   entrada: "Entrada",
   saida: "Saída",
+  estoque_criado: "Estoque criado",
+  estoque_editado: "Estoque editado",
+  estoque_excluido: "Estoque excluído",
 };
 
 function formatarData(isoString) {
