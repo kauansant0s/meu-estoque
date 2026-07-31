@@ -1,5 +1,6 @@
 git add .
 git commit -m "novas mudanças"
+git pull
 git push
 
 não ta deixando adicionar produtos, diz que eu tenho que escolher um estoque mesmo quando eu ja tenho um escolhido, e eu queria que a criação, alteração e deletamento de estoques ficasse nos logs tbm
