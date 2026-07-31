@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titulo %}Configurações{% endblock %}
+{% block conteudo %}
+
+<header class="topo">
+  <div class="topo__etiqueta">Configurações</div>
+  <h1 class="topo__titulo">Configurações</h1>
+  <div class="topo__sub">Gerencie os estoques do sistema</div>
+</header>
+
+<main class="pagina">
+
+  <h2 class="secao-titulo">Estoques</h2>
+
+  <div class="lista-estoques" id="lista-estoques">
+    <!-- itens via JavaScript -->
+  </div>
+
+  <form id="form-novo-estoque" class="barra-acoes">
+    <input type="text" id="novo-estoque-nome" class="campo-busca" placeholder="Nome do novo estoque" required>
+    <button type="submit" class="botao botao--primario">Adicionar</button>
+  </form>
+
+  <div class="erro-formulario" id="erro-estoque"></div>
+
+</main>
+
+<script src="/static/js/configuracoes.js"></script>
+{% endblock %}

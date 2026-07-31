@@ -56,14 +56,12 @@ function renderizarTabela(produtos) {
   const corpo = document.getElementById("corpo-tabela-produtos");
   corpo.innerHTML = "";
 
-  const rotulosEstoque = { casa: "Casa", sala_convivio: "Sala de convívio", servidor: "Servidor" };
-
   produtos.forEach(produto => {
     const abaixoDoMinimo = produto.quantidade <= produto.quantidade_minima;
     const linha = document.createElement("tr");
     linha.innerHTML = `
       <td>${produto.nome}</td>
-      <td>${rotulosEstoque[produto.estoque] || produto.estoque}</td>
+      <td>${produto.estoque_nome}</td>
       <td>${produto.observacoes || "—"}</td>
       <td>${produto.quantidade}</td>
       <td>${produto.quantidade_minima}</td>

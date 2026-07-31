@@ -3,24 +3,68 @@
 // ------------------------------------------------------------
 
 let produtos = [];
-let filtroEstoques = new Set(["casa", "sala_convivio", "servidor"]);
+let estoques = [];
+let filtroEstoques = new Set();
 let ordenarPor = "alfabetica";
-
-const ROTULOS_ESTOQUE = {
-  casa: "Casa",
-  sala_convivio: "Sala de convívio",
-  servidor: "Servidor",
-};
 
 const listaEl = document.getElementById("lista-produtos");
 const estadoVazioEl = document.getElementById("estado-vazio");
 const campoBusca = document.getElementById("campo-busca");
 
-// --- Carregar produtos do servidor ---
+// --- Carregar estoques e produtos do servidor ---
+
+async function carregarEstoques() {
+  const resposta = await fetch("/api/estoques");
+  estoques = await resposta.json();
+  filtroEstoques = new Set(estoques.map(e => e.id));
+  montarCheckboxesFiltro();
+  montarOpcoesSelectEstoque();
+}
 
 async function carregarProdutos() {
   const resposta = await fetch("/api/produtos");
   produtos = await resposta.json();
+  renderizarLista();
+}
+
+// ------------------------------------------------------------
+// Monta os checkboxes do filtro e as opções do select, com base
+// nos estoques que existem agora (podem mudar na tela de config.)
+// ------------------------------------------------------------
+
+function montarCheckboxesFiltro() {
+  const container = document.getElementById("lista-checkboxes-filtro");
+  container.innerHTML = estoques.map(e => `
+    <label class="opcao-checkbox">
+      <input type="checkbox" class="filtro-estoque" value="${e.id}" checked>
+      ${e.nome}
+    </label>
+  `).join("");
+
+  container.querySelectorAll(".filtro-estoque").forEach(caixa => {
+    caixa.addEventListener("change", aoMudarFiltro);
+  });
+}
+
+function montarOpcoesSelectEstoque() {
+  const select = document.getElementById("produto-estoque");
+  select.innerHTML = estoques.map(e => `<option value="${e.id}">${e.nome}</option>`).join("");
+}
+
+function aoMudarFiltro() {
+  filtroEstoques = new Set(
+    [...document.querySelectorAll(".filtro-estoque:checked")].map(c => Number(c.value))
+  );
+
+  // Mostra "2/3" etc. no botão quando nem todos os estoques estão marcados
+  const total = document.querySelectorAll(".filtro-estoque").length;
+  if (filtroEstoques.size < total) {
+    contagemFiltro.textContent = `${filtroEstoques.size}/${total}`;
+    contagemFiltro.classList.remove("oculto");
+  } else {
+    contagemFiltro.classList.add("oculto");
+  }
+
   renderizarLista();
 }
 
@@ -48,7 +92,7 @@ function renderizarLista() {
   const termo = campoBusca.value.trim().toLowerCase();
 
   let filtrados = produtos.filter(p =>
-    p.nome.toLowerCase().includes(termo) && filtroEstoques.has(p.estoque)
+    p.nome.toLowerCase().includes(termo) && filtroEstoques.has(p.estoque_id)
   );
   filtrados = ordenarProdutos(filtrados);
 
@@ -67,12 +111,11 @@ function renderizarLista() {
 
 function criarCartaoProduto(produto) {
   const abaixoDoMinimo = produto.quantidade <= produto.quantidade_minima;
-  const rotuloEstoque = ROTULOS_ESTOQUE[produto.estoque] || produto.estoque;
 
   const div = document.createElement("div");
   div.className = "cartao-produto";
   div.innerHTML = `
-    <div class="cartao-produto__categoria">${rotuloEstoque}</div>
+    <div class="cartao-produto__categoria">${produto.estoque_nome}</div>
     <div class="cartao-produto__nome">${produto.nome}</div>
 
     <div class="cartao-produto__linha">
@@ -142,25 +185,6 @@ function alternarPainel(painelAlvo) {
 document.getElementById("botao-abrir-filtro").addEventListener("click", () => alternarPainel(painelFiltro));
 document.getElementById("botao-abrir-ordenar").addEventListener("click", () => alternarPainel(painelOrdenar));
 
-document.querySelectorAll(".filtro-estoque").forEach(caixa => {
-  caixa.addEventListener("change", () => {
-    filtroEstoques = new Set(
-      [...document.querySelectorAll(".filtro-estoque:checked")].map(c => c.value)
-    );
-
-    // Mostra "2/3" etc. no botão quando nem todos os estoques estão marcados
-    const total = document.querySelectorAll(".filtro-estoque").length;
-    if (filtroEstoques.size < total) {
-      contagemFiltro.textContent = `${filtroEstoques.size}/${total}`;
-      contagemFiltro.classList.remove("oculto");
-    } else {
-      contagemFiltro.classList.add("oculto");
-    }
-
-    renderizarLista();
-  });
-});
-
 document.querySelectorAll('input[name="ordenar-por"]').forEach(botaoRadio => {
   botaoRadio.addEventListener("change", () => {
     ordenarPor = botaoRadio.value;
@@ -187,8 +211,8 @@ function abrirModalProduto(produto) {
 
   // Ao criar um produto novo, se só um estoque estiver marcado no filtro,
   // já deixa ele pré-selecionado (provavelmente é onde ela está trabalhando)
-  const estoquePadrao = filtroEstoques.size === 1 ? [...filtroEstoques][0] : "casa";
-  document.getElementById("produto-estoque").value = produto ? produto.estoque : estoquePadrao;
+  const estoquePadrao = filtroEstoques.size === 1 ? [...filtroEstoques][0] : (estoques[0] ? estoques[0].id : "");
+  document.getElementById("produto-estoque").value = produto ? produto.estoque_id : estoquePadrao;
 
   document.getElementById("produto-minimo").value = produto ? produto.quantidade_minima : 0;
   document.getElementById("produto-observacoes").value = produto ? (produto.observacoes || "") : "";
@@ -211,7 +235,7 @@ formProduto.addEventListener("submit", async (evento) => {
   const id = document.getElementById("produto-id").value;
   const corpo = {
     nome: document.getElementById("produto-nome").value.trim(),
-    estoque: document.getElementById("produto-estoque").value,
+    estoque_id: Number(document.getElementById("produto-estoque").value),
     observacoes: document.getElementById("produto-observacoes").value.trim(),
     quantidade_minima: document.getElementById("produto-minimo").value,
   };
@@ -355,4 +379,7 @@ function selecionarTudoAoFocar(input) {
 aplicarMaiusculoInvertido(document.getElementById("produto-nome"));
 
 // --- Início ---
-carregarProdutos();
+(async function iniciar() {
+  await carregarEstoques();
+  await carregarProdutos();
+})();

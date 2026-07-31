@@ -56,7 +56,7 @@ button { font-family: inherit; }
   z-index: 10;
   background: var(--cor-texto);
   color: var(--cor-superficie);
-  padding: 18px 130px 16px 60px;
+  padding: 18px 172px 16px 60px;
   border-bottom: 4px solid var(--cor-accent);
 }
 
@@ -657,6 +657,35 @@ table.tabela tr:last-child td { border-bottom: none; }
   margin-top: 30px;
 }
 
+/* ---------- Configurações: lista de estoques ---------- */
+
+.lista-estoques {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.item-estoque {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--cor-superficie);
+  border: 1.5px solid var(--cor-borda);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.item-estoque__nome {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.item-estoque__acoes {
+  display: flex;
+  gap: 4px;
+}
+
 /* ---------- Menu lateral ---------- */
 
 .botao-menu {
@@ -723,7 +752,7 @@ table.tabela tr:last-child td { border-bottom: none; }
 @media (max-width: 380px) {
   .nav-rapida__item { width: 34px; height: 34px; }
   .nav-rapida__item svg { width: 19px; height: 19px; }
-  .topo { padding-right: 112px; }
+  .topo { padding-right: 148px; }
 }
 
 .fundo-menu {

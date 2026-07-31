@@ -41,3 +41,10 @@ criar parte de compras a receber
 
 
 adicionar os filtros nos logs, se eu quiser ver só as entradas, ou só exclusões, esse tipo de coisa. e pra poder filtrar por data tbm.
+
+
+adicionar a possibilidade de adicionar mais de um produto de uma vez, escolho o estoque, escrevo o nome do produto e ai no final posso adicionar todos de uma vez
+
+
+
+ver como funcionaria com as duas empresas
