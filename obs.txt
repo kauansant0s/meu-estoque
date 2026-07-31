@@ -1,11 +1,6 @@
 git add .
 git commit -m "novas mudanças"
-git pull
 git push
-
-não ta deixando adicionar produtos, diz que eu tenho que escolher um estoque mesmo quando eu ja tenho um escolhido, e eu queria que a criação, alteração e deletamento de estoques ficasse nos logs tbm
-
-
 
 
 outra coisa que quero adicionar é a possibilidade de alterar a forma de visualização dos produtos, "cards em lista" (seria essa que está agora), "lista" (ocuparia uma largura maior da tela e seria menor em altura) e "grade" (que ai ficaria os cardzinhos menores, da pra mostrar uns 6 por linha). então ficaria os dois menus, de filtro e de ordenar e esse toggle dos tres jeitos de ver os produtos, os tres lado a lado embaixo da caixa de pesquisa
