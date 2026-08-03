@@ -3,23 +3,6 @@ git commit -m "novas mudanças"
 git push
 
 
-outra coisa que quero adicionar é a possibilidade de alterar a forma de visualização dos produtos, "cards em lista" (seria essa que está agora), "lista" (ocuparia uma largura maior da tela e seria menor em altura) e "grade" (que ai ficaria os cardzinhos menores, da pra mostrar uns 6 por linha). então ficaria os dois menus, de filtro e de ordenar e esse toggle dos tres jeitos de ver os produtos, os tres lado a lado embaixo da caixa de pesquisa
-
-svg grade: <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M16.6667 5H5V16.6667H16.6667V5Z" stroke="#1E1E1E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M35 5H23.3333V16.6667H35V5Z" stroke="#1E1E1E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M35 23.3333H23.3333V35H35V23.3333Z" stroke="#1E1E1E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M16.6667 23.3333H5V35H16.6667V23.3333Z" stroke="#1E1E1E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-
-svg lista: <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M13.3333 10H35M13.3333 20H35M13.3333 30H35M5 10H5.01667M5 20H5.01667M5 30H5.01667" stroke="#1E1E1E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-
-svg cards em lista: pode escolher, não achei nenhum que se encaixasse
-
-
-
 
 criar a parte de cotação, no menu lateral esquerdo. seria tipo uma tabela com o nome do produto e o link de compra e tudo.
 

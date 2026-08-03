@@ -171,25 +171,71 @@ listaEl.addEventListener("click", (evento) => {
 const painelFiltro = document.getElementById("painel-filtro");
 const painelOrdenar = document.getElementById("painel-ordenar");
 const contagemFiltro = document.getElementById("contagem-filtro");
+const botaoAbrirFiltro = document.getElementById("botao-abrir-filtro");
+const botaoAbrirOrdenar = document.getElementById("botao-abrir-ordenar");
+
+const paresMenuSuspenso = [
+  [painelFiltro, botaoAbrirFiltro],
+  [painelOrdenar, botaoAbrirOrdenar],
+];
 
 function alternarPainel(painelAlvo) {
-  [painelFiltro, painelOrdenar].forEach(painel => {
+  paresMenuSuspenso.forEach(([painel, botao]) => {
     if (painel === painelAlvo) {
+      const vaiAbrir = painel.classList.contains("oculto");
       painel.classList.toggle("oculto");
+      botao.setAttribute("aria-expanded", vaiAbrir ? "true" : "false");
     } else {
       painel.classList.add("oculto");
+      botao.setAttribute("aria-expanded", "false");
     }
   });
 }
 
-document.getElementById("botao-abrir-filtro").addEventListener("click", () => alternarPainel(painelFiltro));
-document.getElementById("botao-abrir-ordenar").addEventListener("click", () => alternarPainel(painelOrdenar));
+botaoAbrirFiltro.addEventListener("click", () => alternarPainel(painelFiltro));
+botaoAbrirOrdenar.addEventListener("click", () => alternarPainel(painelOrdenar));
+
+// Clicar fora de qualquer um dos dois menus fecha o que estiver aberto
+document.addEventListener("click", (evento) => {
+  if (!evento.target.closest(".menu-suspenso")) {
+    paresMenuSuspenso.forEach(([painel, botao]) => {
+      painel.classList.add("oculto");
+      botao.setAttribute("aria-expanded", "false");
+    });
+  }
+});
 
 document.querySelectorAll('input[name="ordenar-por"]').forEach(botaoRadio => {
   botaoRadio.addEventListener("change", () => {
     ordenarPor = botaoRadio.value;
     renderizarLista();
   });
+});
+
+// ------------------------------------------------------------
+// Modo de visualização: cards em lista / lista / grade
+// A troca é só visual (CSS) — os produtos continuam sendo os
+// mesmos elementos na tela, só reorganizados.
+// ------------------------------------------------------------
+
+const botoesVisualizacao = {
+  cards: document.getElementById("botao-vista-cards"),
+  lista: document.getElementById("botao-vista-lista"),
+  grade: document.getElementById("botao-vista-grade"),
+};
+
+function aplicarModoVisualizacao(modo) {
+  listaEl.classList.remove("lista-produtos--lista", "lista-produtos--grade");
+  if (modo === "lista") listaEl.classList.add("lista-produtos--lista");
+  if (modo === "grade") listaEl.classList.add("lista-produtos--grade");
+
+  Object.entries(botoesVisualizacao).forEach(([chave, botao]) => {
+    botao.classList.toggle("ativo", chave === modo);
+  });
+}
+
+Object.entries(botoesVisualizacao).forEach(([chave, botao]) => {
+  botao.addEventListener("click", () => aplicarModoVisualizacao(chave));
 });
 
 // ------------------------------------------------------------

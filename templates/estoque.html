@@ -14,36 +14,70 @@
     <input type="text" id="campo-busca" class="campo-busca" placeholder="Buscar produto...">
   </div>
 
-  <div class="barra-filtros">
-    <button type="button" class="botao-filtro" id="botao-abrir-filtro">
-      Filtro <span class="botao-filtro__contagem oculto" id="contagem-filtro"></span>
-    </button>
-    <button type="button" class="botao-filtro" id="botao-abrir-ordenar">Ordenar por</button>
-  </div>
+<div class="barra-filtros">
+    <div class="menu-suspenso">
+      <button type="button" class="botao-filtro" id="botao-abrir-filtro" aria-expanded="false">
+        Filtro <span class="botao-filtro__contagem oculto" id="contagem-filtro"></span>
+        <svg class="botao-filtro__seta" width="10" height="10" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="painel-opcoes oculto" id="painel-filtro">
+        <div class="painel-opcoes__titulo">Mostrar estoque(s)</div>
+        <div id="lista-checkboxes-filtro"></div>
+      </div>
+    </div>
 
-  <div class="painel-opcoes oculto" id="painel-filtro">
-    <div class="painel-opcoes__titulo">Mostrar estoque(s)</div>
-    <div id="lista-checkboxes-filtro"></div>
-  </div>
+    <div class="menu-suspenso">
+      <button type="button" class="botao-filtro" id="botao-abrir-ordenar" aria-expanded="false">
+        Ordenar por
+        <svg class="botao-filtro__seta" width="10" height="10" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="painel-opcoes oculto" id="painel-ordenar">
+        <div class="painel-opcoes__titulo">Ordenar por</div>
+        <label class="opcao-radio">
+          <input type="radio" name="ordenar-por" value="alfabetica" checked>
+          Ordem alfabética
+        </label>
+        <label class="opcao-radio">
+          <input type="radio" name="ordenar-por" value="criacao">
+          Ordem de criação
+        </label>
+        <label class="opcao-radio">
+          <input type="radio" name="ordenar-por" value="modificado">
+          Último modificado
+        </label>
+        <label class="opcao-radio">
+          <input type="radio" name="ordenar-por" value="acabando">
+          Mais próximo de acabar
+        </label>
+      </div>
+    </div>
 
-  <div class="painel-opcoes oculto" id="painel-ordenar">
-    <div class="painel-opcoes__titulo">Ordenar por</div>
-    <label class="opcao-radio">
-      <input type="radio" name="ordenar-por" value="alfabetica" checked>
-      Ordem alfabética
-    </label>
-    <label class="opcao-radio">
-      <input type="radio" name="ordenar-por" value="criacao">
-      Ordem de criação
-    </label>
-    <label class="opcao-radio">
-      <input type="radio" name="ordenar-por" value="modificado">
-      Último modificado
-    </label>
-    <label class="opcao-radio">
-      <input type="radio" name="ordenar-por" value="acabando">
-      Mais próximo de acabar
-    </label>
+    <div class="grupo-visualizacao" role="group" aria-label="Modo de visualização">
+      <button type="button" class="botao-visualizacao ativo" id="botao-vista-cards" title="Cards em lista" aria-label="Cards em lista">
+        <svg width="18" height="18" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="5" y="6" width="30" height="8" rx="2" stroke="currentColor" stroke-width="3"/>
+          <rect x="5" y="16" width="30" height="8" rx="2" stroke="currentColor" stroke-width="3"/>
+          <rect x="5" y="26" width="30" height="8" rx="2" stroke="currentColor" stroke-width="3"/>
+        </svg>
+      </button>
+      <button type="button" class="botao-visualizacao" id="botao-vista-lista" title="Lista" aria-label="Lista">
+        <svg width="18" height="18" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13.3333 10H35M13.3333 20H35M13.3333 30H35M5 10H5.01667M5 20H5.01667M5 30H5.01667" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button type="button" class="botao-visualizacao" id="botao-vista-grade" title="Grade" aria-label="Grade">
+        <svg width="18" height="18" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.6667 5H5V16.6667H16.6667V5Z" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M35 5H23.3333V16.6667H35V5Z" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M35 23.3333H23.3333V35H35V23.3333Z" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16.6667 23.3333H5V35H16.6667V23.3333Z" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
   </div>
 
   <div id="lista-produtos" class="lista-produtos">
