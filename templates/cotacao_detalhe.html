@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block titulo %}Cotação{% endblock %}
+{% block conteudo %}
+
+<header class="topo">
+  <div class="topo__etiqueta">Cotação</div>
+  <h1 class="topo__titulo" id="titulo-cotacao">Carregando...</h1>
+  <div class="topo__sub" id="subtitulo-cotacao"></div>
+</header>
+
+<main class="pagina">
+
+  <div class="resumo-cotacao">
+    <div class="stat">
+      <div class="stat__rotulo">Total geral</div>
+      <div class="stat__valor" id="valor-total-cotacao">R$ 0,00</div>
+    </div>
+  </div>
+
+  <div class="barra-acoes-cotacao">
+    <button type="button" class="botao botao--fantasma" id="botao-exportar-excel">Exportar Excel</button>
+    <button type="button" class="botao botao--perigo botao--fantasma" id="botao-excluir-cotacao">Excluir cotação</button>
+  </div>
+
+  <div class="lista-itens-cotacao" id="lista-itens-cotacao">
+    <!-- itens via JavaScript -->
+  </div>
+
+</main>
+
+<button class="botao-flutuante" id="botao-novo-item" aria-label="Adicionar item">+</button>
+
+<!-- Modal: adicionar item -->
+<div class="sobreposicao oculto" id="sobreposicao-item">
+  <div class="modal">
+    <h2 class="modal__titulo" id="titulo-modal-item">Adicionar item</h2>
+
+    <!-- Passo 1: só o link -->
+    <div id="passo-link">
+      <div class="campo">
+        <label for="item-link">Link do produto</label>
+        <input type="url" id="item-link" placeholder="https://...">
+      </div>
+      <div class="erro-formulario" id="erro-busca"></div>
+      <div class="modal__acoes">
+        <button type="button" class="botao botao--fantasma" id="botao-sem-link">Adicionar sem link</button>
+        <button type="button" class="botao botao--primario" id="botao-buscar-link">Buscar</button>
+      </div>
+    </div>
+
+    <!-- Passo 2: formulário completo -->
+    <form id="form-item" class="oculto">
+      <input type="hidden" id="item-imagem-existente">
+
+      <div class="campo" id="preview-imagem-wrap" style="display:none;">
+        <label>Imagem encontrada</label>
+        <img id="preview-imagem" src="" alt="" class="preview-imagem-item">
+      </div>
+
+      <div class="campo" id="campo-upload-imagem" style="display:none;">
+        <label for="item-imagem-arquivo">Foto (opcional)</label>
+        <input type="file" id="item-imagem-arquivo" accept="image/*">
+      </div>
+
+      <div class="campo">
+        <label for="item-nome">Nome do produto</label>
+        <input type="text" id="item-nome" required>
+        <div class="aviso-campo oculto" id="aviso-nome">Não conseguimos identificar automaticamente — preencha aqui.</div>
+      </div>
+
+      <div class="campo">
+        <label for="item-loja">Loja</label>
+        <input type="text" id="item-loja">
+      </div>
+
+      <div class="linha-campos">
+        <div class="campo">
+          <label for="item-preco">Preço (R$)</label>
+          <input type="number" id="item-preco" min="0" step="0.01" value="0" required>
+        </div>
+        <div class="campo">
+          <label for="item-frete">Frete (R$)</label>
+          <input type="number" id="item-frete" min="0" step="0.01" value="0">
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="item-observacao">Observação (opcional)</label>
+        <input type="text" id="item-observacao" placeholder="Ex: confirmar cor com o vendedor...">
+      </div>
+
+      <div class="erro-formulario" id="erro-item"></div>
+      <div class="modal__acoes">
+        <button type="button" class="botao botao--fantasma" id="botao-cancelar-item">Cancelar</button>
+        <button type="submit" class="botao botao--primario">Salvar item</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const COTACAO_ID = {{ cotacao_id }};
+</script>
+<script src="/static/js/cotacao_detalhe.js"></script>
+{% endblock %}

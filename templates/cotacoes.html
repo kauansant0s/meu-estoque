@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block titulo %}Cotações{% endblock %}
+{% block conteudo %}
+
+<header class="topo">
+  <div class="topo__etiqueta">Cotações</div>
+  <h1 class="topo__titulo">Cotações</h1>
+  <div class="topo__sub">Pesquisas de preço organizadas por pedido</div>
+</header>
+
+<main class="pagina">
+
+  <div class="lista-cotacoes" id="lista-cotacoes">
+    <!-- itens via JavaScript -->
+  </div>
+
+</main>
+
+<button class="botao-flutuante" id="botao-nova-cotacao" aria-label="Nova cotação">+</button>
+
+<script src="/static/js/cotacoes.js"></script>
+{% endblock %}

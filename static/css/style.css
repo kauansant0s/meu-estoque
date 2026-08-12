@@ -998,3 +998,131 @@ table.tabela tr:last-child td { border-bottom: none; }
   font-size: 12px;
   padding: 3px;
 }
+
+/* ---------- Cotações ---------- */
+
+.lista-cotacoes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cartao-cotacao {
+  display: block;
+  background: var(--cor-superficie);
+  border: 1.5px solid var(--cor-borda);
+  border-radius: var(--raio);
+  padding: 14px;
+  text-decoration: none;
+  color: var(--cor-texto);
+}
+
+.cartao-cotacao__titulo {
+  font-family: var(--fonte-display);
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.cartao-cotacao__info {
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+  font-family: var(--fonte-mono);
+}
+
+.resumo-cotacao {
+  margin: 16px 0;
+}
+
+.barra-acoes-cotacao {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.lista-itens-cotacao {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-cotacao {
+  display: flex;
+  gap: 12px;
+  background: var(--cor-superficie);
+  border: 1.5px solid var(--cor-borda);
+  border-radius: var(--raio);
+  padding: 12px;
+  align-items: flex-start;
+}
+
+.item-cotacao__imagem {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1.5px solid var(--cor-borda);
+  flex-shrink: 0;
+  background: var(--cor-fundo);
+}
+
+.item-cotacao__imagem--vazia {
+  background: var(--cor-fundo);
+}
+
+.item-cotacao__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-cotacao__nome {
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.item-cotacao__loja {
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+  margin-bottom: 6px;
+}
+
+.item-cotacao__precos {
+  font-family: var(--fonte-mono);
+  font-size: 13.5px;
+  margin-bottom: 4px;
+}
+
+.item-cotacao__observacao {
+  font-size: 12.5px;
+  color: var(--cor-texto-suave);
+  font-style: italic;
+  margin-bottom: 4px;
+}
+
+.item-cotacao__link {
+  font-size: 12.5px;
+  color: var(--cor-info);
+  text-decoration: underline;
+}
+
+.item-cotacao__acoes {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.preview-imagem-item {
+  max-width: 120px;
+  border-radius: 8px;
+  border: 1.5px solid var(--cor-borda);
+  display: block;
+}
+
+.aviso-campo {
+  font-size: 12px;
+  color: var(--cor-alerta);
+  margin-top: 4px;
+}
