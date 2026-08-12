@@ -4,7 +4,6 @@ git push
 
 
 
-criar a parte de cotação, no menu lateral esquerdo. seria tipo uma tabela com o nome do produto e o link de compra e tudo.
 
 
 criar parte de compras a receber
@@ -22,3 +21,10 @@ ver como funcionaria com as duas empresas
 
 
 ver um jeito de não precisar ficar deletando o banco de dados
+
+
+colocar nas configurações e estilo de visualização padrão que ela quer dos produtos do estoque
+
+mandar uma planilha de cotação da ana pro claude ver como tem que ficar
+
+deixar os valores dentro da planilha formatados para mostrar o R$ na frente e ter os pontos e virgulas, colocar a fórmula na célula de total e, se o campo de observação estiver vazio, ele só não é exportado para a planilha
