@@ -25,9 +25,6 @@ function renderizarCotacao() {
   document.getElementById("subtitulo-cotacao").textContent =
     new Date(cotacaoAtual.criado_em).toLocaleDateString("pt-BR");
 
-  const total = cotacaoAtual.itens.reduce((soma, item) => soma + item.preco + item.frete, 0);
-  document.getElementById("valor-total-cotacao").textContent = formatarPreco(total);
-
   const lista = document.getElementById("lista-itens-cotacao");
   lista.innerHTML = "";
 

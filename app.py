@@ -679,46 +679,59 @@ def exportar_cotacao(cotacao_id):
     ws = wb.active
     ws.title = "Cotação"
 
-    cabecalho = ["Imagem", "Produto", "Loja", "Preço", "Frete", "Total", "Link", "Observação"]
-    ws.append(cabecalho)
-    for col, largura in zip("ABCDEFGH", [16, 32, 20, 12, 12, 12, 34, 30]):
-        ws.column_dimensions[col].width = largura
+    ws.column_dimensions["A"].width = 22
+    ws.column_dimensions["B"].width = 12
+    ws.column_dimensions["C"].width = 12
+    ws.column_dimensions["D"].width = 12
+    ws.column_dimensions["E"].width = 10
+    ws.column_dimensions["F"].width = 34
 
-    linha = 2
-    total_geral = 0.0
+    fonte_titulo = Font(bold=True, size=13)
+    fonte_produto = Font(bold=True, size=11)
+    fonte_cabecalho = Font(bold=True)
+
+    ws.merge_cells("A1:D1")
+    ws["A1"] = f"COTAÇÃO {cotacao['titulo'].upper()}"
+    ws["A1"].font = fonte_titulo
+
+    linha = 3
+    ESPACO_POR_BLOCO = 13  # linhas reservadas por item, pra caber a foto sem sobrepor o próximo
 
     for item in itens:
-        ws.row_dimensions[linha].height = 80
+        # Nome do produto pesquisado (identifica o bloco)
+        ws.merge_cells(f"A{linha}:D{linha}")
+        ws.cell(row=linha, column=1, value=item["nome"]).font = fonte_produto
+        linha += 1
+
+        # Cabeçalho da mini-tabela
+        for col, texto in enumerate(["LOJA", "VALOR", "FRETE", "TOTAL", "Link", "Observação"], start=1):
+            ws.cell(row=linha, column=col, value=texto).font = fonte_cabecalho
+
+        linha_dados = linha + 1
+        ws.cell(row=linha_dados, column=1, value=item["loja"] or "")
+        ws.cell(row=linha_dados, column=2, value=item["preco"])
+        ws.cell(row=linha_dados, column=3, value=item["frete"])
+        ws.cell(row=linha_dados, column=4, value=f"=SUM(B{linha_dados}:C{linha_dados})")
+
+        if item["link"]:
+            celula_link = ws.cell(row=linha_dados, column=5, value="Link")
+            celula_link.hyperlink = item["link"]
+            celula_link.font = Font(color="0563C1", underline="single")
+
+        ws.cell(row=linha_dados, column=6, value=item["observacao"] or "")
 
         if item["imagem_arquivo"]:
             caminho_imagem = os.path.join(PASTA_UPLOADS, item["imagem_arquivo"])
             if os.path.exists(caminho_imagem):
                 try:
                     img = ImagemExcel(caminho_imagem)
-                    img.width = 90
-                    img.height = 90
-                    ws.add_image(img, f"A{linha}")
+                    img.width = 220
+                    img.height = 220
+                    ws.add_image(img, f"A{linha_dados + 1}")
                 except Exception:
                     pass
 
-        subtotal = item["preco"] + item["frete"]
-        total_geral += subtotal
-
-        ws.cell(row=linha, column=2, value=item["nome"])
-        ws.cell(row=linha, column=3, value=item["loja"])
-        ws.cell(row=linha, column=4, value=item["preco"])
-        ws.cell(row=linha, column=5, value=item["frete"])
-        ws.cell(row=linha, column=6, value=subtotal)
-        if item["link"]:
-            celula_link = ws.cell(row=linha, column=7, value="Link")
-            celula_link.hyperlink = item["link"]
-            celula_link.font = Font(color="0563C1", underline="single")
-        ws.cell(row=linha, column=8, value=item["observacao"])
-        linha += 1
-
-    linha += 1
-    ws.cell(row=linha, column=5, value="Total geral:")
-    ws.cell(row=linha, column=6, value=total_geral)
+        linha += ESPACO_POR_BLOCO
 
     buffer = BytesIO()
     wb.save(buffer)
