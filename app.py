@@ -415,6 +415,42 @@ def salvar_arquivo_imagem(arquivo_upload):
     return nome_salvo
 
 
+LOJAS_CONHECIDAS = {
+    "mercadolivre.com.br": "Mercado Livre",
+    "magazineluiza.com.br": "Magazine Luiza",
+    "magazinevoce.com.br": "Magazine Luiza",
+    "amazon.com.br": "Amazon",
+    "americanas.com.br": "Americanas",
+    "casasbahia.com.br": "Casas Bahia",
+    "pontofrio.com.br": "Ponto Frio",
+    "extra.com.br": "Extra",
+    "shopee.com.br": "Shopee",
+    "aliexpress.com": "AliExpress",
+    "kabum.com.br": "KaBuM!",
+    "pichau.com.br": "Pichau",
+    "submarino.com.br": "Submarino",
+    "netshoes.com.br": "Netshoes",
+    "centauro.com.br": "Centauro",
+    "carrefour.com.br": "Carrefour",
+    "fastshop.com.br": "Fast Shop",
+}
+
+
+def formatar_nome_loja(dominio):
+    """Deixa o nome da loja apresentável quando só temos o domínio
+    (ex: 'mercadolivre.com.br' -> 'Mercado Livre'). Lojas conhecidas usam
+    o nome oficial; as demais ganham pelo menos capitalização decente."""
+    if not dominio:
+        return dominio
+
+    dominio_limpo = dominio.lower().replace("www.", "")
+    if dominio_limpo in LOJAS_CONHECIDAS:
+        return LOJAS_CONHECIDAS[dominio_limpo]
+
+    primeira_parte = dominio_limpo.split(".")[0]
+    return primeira_parte.replace("-", " ").replace("_", " ").title()
+
+
 def baixar_imagem_da_url(imagem_url, headers):
     """Baixa uma imagem de uma URL externa e salva localmente. Devolve o nome salvo ou None."""
     try:
@@ -450,7 +486,7 @@ def buscar_produto():
     # (não depende de conseguir acessar o site)
     try:
         dominio = urlparse(url).netloc.replace("www.", "")
-        resultado["loja"] = dominio
+        resultado["loja"] = formatar_nome_loja(dominio)
     except Exception:
         pass
 
@@ -689,6 +725,7 @@ def exportar_cotacao(cotacao_id):
     fonte_titulo = Font(bold=True, size=13)
     fonte_produto = Font(bold=True, size=11)
     fonte_cabecalho = Font(bold=True)
+    FORMATO_MOEDA = 'R$ #,##0.00'
 
     ws.merge_cells("A1:D1")
     ws["A1"] = f"COTAÇÃO {cotacao['titulo'].upper()}"
@@ -709,9 +746,15 @@ def exportar_cotacao(cotacao_id):
 
         linha_dados = linha + 1
         ws.cell(row=linha_dados, column=1, value=item["loja"] or "")
-        ws.cell(row=linha_dados, column=2, value=item["preco"])
-        ws.cell(row=linha_dados, column=3, value=item["frete"])
-        ws.cell(row=linha_dados, column=4, value=f"=SUM(B{linha_dados}:C{linha_dados})")
+
+        celula_valor = ws.cell(row=linha_dados, column=2, value=item["preco"])
+        celula_valor.number_format = FORMATO_MOEDA
+
+        celula_frete = ws.cell(row=linha_dados, column=3, value=item["frete"])
+        celula_frete.number_format = FORMATO_MOEDA
+
+        celula_total = ws.cell(row=linha_dados, column=4, value=f"=SUM(B{linha_dados}:C{linha_dados})")
+        celula_total.number_format = FORMATO_MOEDA
 
         if item["link"]:
             celula_link = ws.cell(row=linha_dados, column=5, value="Link")
