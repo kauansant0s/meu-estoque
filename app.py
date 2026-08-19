@@ -735,13 +735,18 @@ def exportar_cotacao(cotacao_id):
     ESPACO_POR_BLOCO = 13  # linhas reservadas por item, pra caber a foto sem sobrepor o próximo
 
     for item in itens:
+        tem_observacao = bool(item["observacao"] and item["observacao"].strip())
+
         # Nome do produto pesquisado (identifica o bloco)
         ws.merge_cells(f"A{linha}:D{linha}")
         ws.cell(row=linha, column=1, value=item["nome"]).font = fonte_produto
         linha += 1
 
-        # Cabeçalho da mini-tabela
-        for col, texto in enumerate(["LOJA", "VALOR", "FRETE", "TOTAL", "Link", "Observação"], start=1):
+        # Cabeçalho da mini-tabela — "Observação" só entra se o item tiver uma
+        cabecalhos = ["LOJA", "VALOR", "FRETE", "TOTAL", "Link"]
+        if tem_observacao:
+            cabecalhos.append("Observação")
+        for col, texto in enumerate(cabecalhos, start=1):
             ws.cell(row=linha, column=col, value=texto).font = fonte_cabecalho
 
         linha_dados = linha + 1
@@ -761,7 +766,8 @@ def exportar_cotacao(cotacao_id):
             celula_link.hyperlink = item["link"]
             celula_link.font = Font(color="0563C1", underline="single")
 
-        ws.cell(row=linha_dados, column=6, value=item["observacao"] or "")
+        if tem_observacao:
+            ws.cell(row=linha_dados, column=6, value=item["observacao"])
 
         if item["imagem_arquivo"]:
             caminho_imagem = os.path.join(PASTA_UPLOADS, item["imagem_arquivo"])

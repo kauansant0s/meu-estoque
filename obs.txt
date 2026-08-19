@@ -21,6 +21,3 @@ ver um jeito de não precisar ficar deletando o banco de dados
 
 
 colocar nas configurações e estilo de visualização padrão que ela quer dos produtos do estoque
-
-
-se o campo de observação estiver vazio, ele só não é exportado para a planilha
